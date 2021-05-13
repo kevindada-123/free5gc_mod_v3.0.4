@@ -16,16 +16,17 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateUEContext - Namf_Communication CreateUEContext service Operation
 func HTTPCreateUEContext(c *gin.Context) {
 	var createUeContextRequest models.CreateUeContextRequest
 	createUeContextRequest.JsonData = new(models.UeContextCreateData)
-
+	logger.CommLog.Debugln(" func : HTTPCreateUEContext")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)
@@ -98,7 +99,7 @@ func HTTPCreateUEContext(c *gin.Context) {
 // EBIAssignment - Namf_Communication EBI Assignment service Operation
 func HTTPEBIAssignment(c *gin.Context) {
 	var assignEbiData models.AssignEbiData
-
+	logger.CommLog.Debugln(" func : HTTPEBIAssignment")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{
@@ -146,7 +147,7 @@ func HTTPEBIAssignment(c *gin.Context) {
 // RegistrationStatusUpdate - Namf_Communication RegistrationStatusUpdate service Operation
 func HTTPRegistrationStatusUpdate(c *gin.Context) {
 	var ueRegStatusUpdateReqData models.UeRegStatusUpdateReqData
-
+	logger.CommLog.Debugln(" func : HTTPRegistrationStatusUpdate")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)
@@ -194,7 +195,7 @@ func HTTPRegistrationStatusUpdate(c *gin.Context) {
 // ReleaseUEContext - Namf_Communication ReleaseUEContext service Operation
 func HTTPReleaseUEContext(c *gin.Context) {
 	var ueContextRelease models.UeContextRelease
-
+	logger.CommLog.Debugln(" func : HTTPReleaseUEContext")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)
@@ -243,7 +244,7 @@ func HTTPReleaseUEContext(c *gin.Context) {
 func HTTPUEContextTransfer(c *gin.Context) {
 	var ueContextTransferRequest models.UeContextTransferRequest
 	ueContextTransferRequest.JsonData = new(models.UeContextTransferReqData)
-
+	logger.CommLog.Debugln(" func : HTTPUEContextTransfer")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)

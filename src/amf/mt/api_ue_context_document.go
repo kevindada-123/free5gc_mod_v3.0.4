@@ -15,13 +15,14 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ProvideDomainSelectionInfo - Namf_MT Provide Domain Selection Info service Operation
 func HTTPProvideDomainSelectionInfo(c *gin.Context) {
-
+	logger.MtLog.Debugln("func : HTTPProvideDomainSelectionInfo")
 	req := http_wrapper.NewRequest(c.Request, nil)
 	req.Params["ueContextId"] = c.Params.ByName("ueContextId")
 	infoClassQuery := c.Query("info-class")

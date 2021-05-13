@@ -582,7 +582,6 @@ func HandleRegistrationRequest(ue *context.AmfUe, anType models.AccessType, proc
 	registrationRequest *nasMessage.RegistrationRequest) error {
 
 	logger.GmmLog.Info("[AMF] Handle Registration Request")
-
 	util.StopT3513(ue)
 	util.StopT3565(ue)
 
@@ -809,7 +808,7 @@ func HandleInitialRegistration(ue *context.AmfUe, anType models.AccessType) erro
 			}
 		}
 	}
-
+	logger.GmmLog.Debugln("ue pei", ue.Pei)
 	if len(ue.Pei) == 0 {
 		gmm_message.SendIdentityRequest(ue.RanUe[anType], nasMessage.MobileIdentity5GSTypeImei)
 		return nil
@@ -1691,6 +1690,7 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 
 	// TODO: consider ausf group id, Routing ID part of SUCI
 	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
+	//AMF透過NRF呼叫 AUSF 進行5GAKA
 	resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
 	if err != nil {
 		logger.GmmLog.Error("AMF can not select an AUSF by NRF")
@@ -2068,7 +2068,7 @@ func HandleAuthenticationResponse(ue *context.AmfUe, accessType models.AccessTyp
 				})
 			}
 		}
-
+		logger.GmmLog.Info("here AuthType__5_G_AKA")
 		response, problemDetails, err := consumer.SendAuth5gAkaConfirmRequest(ue, hex.EncodeToString(resStar[:]))
 		if err != nil {
 			return err
@@ -2109,7 +2109,7 @@ func HandleAuthenticationResponse(ue *context.AmfUe, accessType models.AccessTyp
 			logger.GmmLog.Debugf("EapAuthConfirm Error[Problem Detail: %+v]", problemDetails)
 			return nil
 		}
-
+		logger.GmmLog.Info("here AuthType_EAP_AKA_PRIME")
 		switch response.AuthResult {
 		case models.AuthResult_SUCCESS:
 			ue.UnauthenticatedSupi = false

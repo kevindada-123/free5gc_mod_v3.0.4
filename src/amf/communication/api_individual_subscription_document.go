@@ -15,14 +15,15 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AMFStatusChangeSubscribeModify - Namf_Communication AMF Status Change Subscribe Modify service Operation
 func HTTPAMFStatusChangeSubscribeModify(c *gin.Context) {
 	var subscriptionData models.SubscriptionData
-
+	logger.CommLog.Debugln(" func : HTTPAMFStatusChangeSubscribeModify")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)
@@ -70,7 +71,7 @@ func HTTPAMFStatusChangeSubscribeModify(c *gin.Context) {
 
 // AMFStatusChangeUnSubscribe - Namf_Communication AMF Status Change UnSubscribe service Operation
 func HTTPAMFStatusChangeUnSubscribe(c *gin.Context) {
-
+	logger.CommLog.Debugln(" func : HTTPAMFStatusChangeUnSubscribe")
 	req := http_wrapper.NewRequest(c.Request, nil)
 	req.Params["subscriptionId"] = c.Params.ByName("subscriptionId")
 

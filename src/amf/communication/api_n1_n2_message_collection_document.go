@@ -16,16 +16,17 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // N1N2MessageTransfer - Namf_Communication N1N2 Message Transfer (UE Specific) service Operation
 func HTTPN1N2MessageTransfer(c *gin.Context) {
 	var n1n2MessageTransferRequest models.N1N2MessageTransferRequest
 	n1n2MessageTransferRequest.JsonData = new(models.N1N2MessageTransferReqData)
-
+	logger.CommLog.Debugln(" func : HTTPN1N2MessageTransfer")
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{
@@ -86,7 +87,7 @@ func HTTPN1N2MessageTransfer(c *gin.Context) {
 }
 
 func HTTPN1N2MessageTransferStatus(c *gin.Context) {
-
+	logger.CommLog.Debugln(" func : HTTPN1N2MessageTransferStatus")
 	req := http_wrapper.NewRequest(c.Request, nil)
 	req.Params["ueContextId"] = c.Params.ByName("ueContextId")
 	req.Params["reqUri"] = c.Request.RequestURI

@@ -860,7 +860,6 @@ func HandleInitialUEMessage(ran *context.AmfRan, message *ngapType.NGAPPDU) {
 		logger.NgapLog.Error("NGAP Message is nil")
 		return
 	}
-
 	initiatingMessage := message.InitiatingMessage
 	if initiatingMessage == nil {
 		logger.NgapLog.Error("Initiating Message is nil")
@@ -948,7 +947,6 @@ func HandleInitialUEMessage(ran *context.AmfRan, message *ngapType.NGAPPDU) {
 			logger.NgapLog.Errorf("NewRanUe Error: %+v", err)
 		}
 		Ngaplog.Debugf("New RanUe [RanUeNgapID: %d]", ranUe.RanUeNgapId)
-
 		if fiveGSTMSI != nil {
 			Ngaplog.Debug("Receive 5G-S-TMSI")
 
@@ -999,6 +997,8 @@ func HandleInitialUEMessage(ran *context.AmfRan, message *ngapType.NGAPPDU) {
 
 	if uEContextRequest != nil {
 		Ngaplog.Debug("Trigger initial Context Setup procedure")
+		//jsondata002, _ := json.Marshal(uEContextRequest)
+		//logger.NgapLog.Info("show uEContextRequest : %s",string(jsondata002))
 		ranUe.UeContextRequest = true
 		// TODO: Trigger Initial Context Setup procedure
 	} else {

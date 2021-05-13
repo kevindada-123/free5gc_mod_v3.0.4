@@ -71,6 +71,7 @@ func (*AUSF) Initialize(c *cli.Context) {
 			initLog.Warnf("Log level [%s] is not valid, set to [info] level", app.ContextSelf().Logger.AUSF.DebugLevel)
 			logger.SetLogLevel(logrus.InfoLevel)
 		} else {
+			level = logrus.DebugLevel
 			logger.SetLogLevel(level)
 			initLog.Infof("Log level is set to [%s] level", level)
 		}

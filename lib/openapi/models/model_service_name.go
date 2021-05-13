@@ -47,4 +47,9 @@ const (
 	ServiceName_NCHF_CONVERGEDCHARGING    ServiceName = "nchf-convergedcharging"
 	ServiceName_NNWDAF_EVENTSSUBSCRIPTION ServiceName = "nnwdaf-eventssubscription"
 	ServiceName_NNWDAF_ANALYTICSINFO      ServiceName = "nnwdaf-analyticsinfo"
+	//20210430 kevin
+	ServiceName_NSAMF_TEST ServiceName = "nsamf-test"
+	//20210501 kevin
+	ServiceName_NSMAF_PDUSESSION     ServiceName = "nsamf-pdusession"
+	ServiceName_NSMAF_EVENT_EXPOSURE ServiceName = "nsamf-event-exposure"
 )

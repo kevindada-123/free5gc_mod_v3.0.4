@@ -14,6 +14,7 @@ import (
 	nrf_service "free5gc/src/nrf/service"
 	nssf_service "free5gc/src/nssf/service"
 	pcf_service "free5gc/src/pcf/service"
+	smaf_service "free5gc/src/smaf/service"
 	smf_service "free5gc/src/smf/service"
 	"free5gc/src/test"
 	udm_service "free5gc/src/udm/service"
@@ -38,6 +39,8 @@ var NFs = []app.NetworkFunction{
 	&nssf_service.NSSF{},
 	&ausf_service.AUSF{},
 	//&n3iwf_service.N3IWF{},
+	//20210504 kevin
+	&smaf_service.SMAF{},
 }
 
 func init() {
