@@ -33,14 +33,14 @@ var NFs = []app.NetworkFunction{
 	&nrf_service.NRF{},
 	&amf_service.AMF{},
 	&smf_service.SMF{},
+	//20210504 kevin
+	&smaf_service.SMAF{},
 	&udr_service.UDR{},
 	&pcf_service.PCF{},
 	&udm_service.UDM{},
 	&nssf_service.NSSF{},
 	&ausf_service.AUSF{},
 	//&n3iwf_service.N3IWF{},
-	//20210504 kevin
-	&smaf_service.SMAF{},
 }
 
 func init() {
@@ -62,6 +62,15 @@ func init() {
 			log.Fatal("SMF test config error")
 			return
 		}
+		//20210517
+		//flagSet2 := flag.NewFlagSet("free5gc", 0)
+		//flagSet2.String("smafcfg", "", "SMAF Config Path")
+		//cli2 := cli.NewContext(nil, flagSet2, nil)
+		//err2 := cli2.Set("smafcfg", path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf"))
+		//if err2 != nil {
+		//	log.Fatal("SMAF test config error")
+		//	return
+		//}
 
 		for _, service := range NFs {
 			service.Initialize(cli)

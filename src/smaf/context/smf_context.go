@@ -94,7 +94,7 @@ func InitSmafContext(config *factory.Config) {
 	} else {
 		smafContext.URIScheme = models.UriScheme(sbi.Scheme)
 		smafContext.RegisterIPv4 = "127.0.0.1" // default localhost
-		smafContext.SBIPort = 29502            // default port
+		smafContext.SBIPort = 23138            // default port
 		if sbi.RegisterIPv4 != "" {
 			smafContext.RegisterIPv4 = sbi.RegisterIPv4
 		}

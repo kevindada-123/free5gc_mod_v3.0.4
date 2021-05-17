@@ -76,8 +76,11 @@ func (*SMAF) Initialize(c *cli.Context) {
 	if config.smafcfg != "" {
 		factory.InitConfigFactory(config.smafcfg)
 	} else {
-		DefaultSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
-		factory.InitConfigFactory(DefaultSmafConfigPath)
+		//DefaultSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
+		//factory.InitConfigFactory(DefaultSmafConfigPath)
+		//20210517
+		testSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf")
+		factory.InitConfigFactory(testSmafConfigPath)
 	}
 
 	if config.uerouting != "" {
@@ -158,6 +161,7 @@ func (smaf *SMAF) Start() {
 
 	for _, upf := range context.SMAF_Self().UserPlaneInformation.UPFs {
 		logger.AppLog.Infof("Send PFCP Association Request to UPF[%s]\n", upf.NodeID.NodeIdValue)
+		fmt.Println(upf.NodeID.NodeIdValue)
 		message.SendPfcpAssociationSetupRequest(upf.NodeID)
 	}
 
