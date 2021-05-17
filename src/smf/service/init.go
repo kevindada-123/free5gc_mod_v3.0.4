@@ -157,7 +157,7 @@ func (smf *SMF) Start() {
 
 	for _, upf := range context.SMF_Self().UserPlaneInformation.UPFs {
 		logger.AppLog.Infof("Send PFCP Association Request to UPF[%s]\n", upf.NodeID.NodeIdValue)
-		fmt.Println(upf.NodeID.NodeIdValue)
+		fmt.Println(upf.NodeID)
 		message.SendPfcpAssociationSetupRequest(upf.NodeID)
 	}
 
