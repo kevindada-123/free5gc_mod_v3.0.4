@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"free5gc/lib/openapi"
+	"free5gc/lib/openapi/Nsmaf_PDUSession"
 	"free5gc/lib/openapi/Nsmf_PDUSession"
 	"free5gc/lib/openapi/models"
 	amf_context "free5gc/src/amf/context"
@@ -75,7 +76,43 @@ func SendCreateSmContextRequest(
 			problemDetail = &problem
 		}
 	} else {
-		err1 = openapi.ReportError("server no response")
+		err1 = openapi.ReportError("smf server no response")
+	}
+	return response, smContextRef, errorResponse, problemDetail, err1
+}
+func SendCreateSmContextRequest_smaf(
+	ue *amf_context.AmfUe, smfUri string, nasPdu []byte, smContextCreateData models.SmContextCreateData) (
+	response *models.PostSmContextsResponse, smContextRef string, errorResponse *models.PostSmContextsErrorResponse,
+	problemDetail *models.ProblemDetails, err1 error) {
+	configuration := Nsmaf_PDUSession.NewConfiguration()
+	configuration.SetBasePath(smfUri)
+
+	client := Nsmaf_PDUSession.NewAPIClient(configuration)
+
+	var postSmContextsRequest models.PostSmContextsRequest
+	postSmContextsRequest.JsonData = &smContextCreateData
+	postSmContextsRequest.BinaryDataN1SmMessage = nasPdu
+
+	postSmContextReponse, httpResponse, err :=
+		client.SMContextsCollectionApi.PostSmContexts(context.Background(), postSmContextsRequest)
+	if err == nil {
+		response = &postSmContextReponse
+		smContextRef = httpResponse.Header.Get("Location")
+	} else if httpResponse != nil {
+		if httpResponse.Status != err.Error() {
+			err1 = err
+			return
+		}
+		switch httpResponse.StatusCode {
+		case 400, 403, 404, 500, 503, 504:
+			errResponse := err.(openapi.GenericOpenAPIError).Model().(models.PostSmContextsErrorResponse)
+			errorResponse = &errResponse
+		case 411, 413, 415, 429:
+			problem := err.(openapi.GenericOpenAPIError).Model().(models.ProblemDetails)
+			problemDetail = &problem
+		}
+	} else {
+		err1 = openapi.ReportError("smaf server no response ")
 	}
 	return response, smContextRef, errorResponse, problemDetail, err1
 }
