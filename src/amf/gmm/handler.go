@@ -181,7 +181,7 @@ func HandlePDUSessionEstablishmentRequest(ue *context.AmfUe, anType models.Acces
 			dnn = amfSelf.SupportDnnLists[0]
 		}
 		pduSession.Dnn = dnn
-
+		//fmt.Printf("PDU session info %+v  \n", pduSession)
 		var smfID, smfUri string
 		//if smfIDTmp, smfUriTmp, err := selectSmf(ue, anType, &pduSession, payload); err != nil {
 		//	logger.GmmLog.Errorf("[AMF] SMF Selection for Snssai[%+v] Failed[%+v]", sNssai, err)

@@ -14,6 +14,8 @@ import (
 	nrf_service "free5gc/src/nrf/service"
 	nssf_service "free5gc/src/nssf/service"
 	pcf_service "free5gc/src/pcf/service"
+
+	//smf_service "free5gc/src/smf/service"
 	smaf_service "free5gc/src/smaf/service"
 	"free5gc/src/test"
 	udm_service "free5gc/src/udm/service"
