@@ -307,6 +307,7 @@ func nnrfNFManagementOption(nf *models.NfProfile, nfprofile models.NfProfile) {
 		}
 		nf.SmfInfo = &a
 	}
+	//20210525 add
 	//smafInfo
 	if nfprofile.SmafInfo != nil {
 
