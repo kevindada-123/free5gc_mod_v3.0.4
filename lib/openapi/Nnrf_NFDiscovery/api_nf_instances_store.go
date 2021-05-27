@@ -10,6 +10,7 @@
 package Nnrf_NFDiscovery
 
 import (
+	"fmt"
 	"free5gc/lib/openapi"
 	"free5gc/lib/openapi/models"
 
@@ -116,7 +117,7 @@ func (a *NFInstancesStoreApiService) SearchNFInstances(ctx context.Context, targ
 		localVarFileBytes    []byte
 		localVarReturnValue  models.SearchResult
 	)
-
+	//20210527 TS29.501 ch6.2.3.2.3
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath() + "/nf-instances"
 
@@ -260,13 +261,14 @@ func (a *NFInstancesStoreApiService) SearchNFInstances(ctx context.Context, targ
 		RawBody:     localVarBody,
 		ErrorStatus: localVarHTTPResponse.Status,
 	}
-
+	fmt.Printf("outside localVarReturnValue : %#v  \n", localVarReturnValue)
 	switch localVarHTTPResponse.StatusCode {
 	case 200:
 		err = openapi.Deserialize(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 		if err != nil {
 			apiError.ErrorStatus = err.Error()
 		}
+		fmt.Printf("in case 200 localVarReturnValue : %#v  \n", localVarReturnValue)
 		return localVarReturnValue, localVarHTTPResponse, nil
 	case 307:
 		return localVarReturnValue, localVarHTTPResponse, nil

@@ -25,7 +25,6 @@ func SendSearchNFInstances(nrfUri string, targetNfType, requestNfType models.NfT
 	}
 	//fmt.Printf("result : %#v  \n", result)
 	fmt.Printf("NfInstances number : %#v  \n", len(result.NfInstances))
-	//fmt.Printf("err : %#v  \n", err)
 	return result, err
 }
 
