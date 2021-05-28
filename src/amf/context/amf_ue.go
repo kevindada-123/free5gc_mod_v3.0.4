@@ -81,15 +81,13 @@ type AmfUe struct {
 	LastVisitedRegisteredTai models.Tai
 	TimeZone                 string
 	/* context about udm */
-	UdmId            string
-	NudmUECMUri      string
-	NudmSDMUri       string
-	ContextValid     bool
-	Reachability     models.UeReachability
-	SubscribedData   models.SubscribedData
-	SmfSelectionData *models.SmfSelectionSubscriptionData
-	//20210527 added
-	SmafSelectionData                 *models.SmafSelectionSubscriptionData
+	UdmId                             string
+	NudmUECMUri                       string
+	NudmSDMUri                        string
+	ContextValid                      bool
+	Reachability                      models.UeReachability
+	SubscribedData                    models.SubscribedData
+	SmfSelectionData                  *models.SmfSelectionSubscriptionData
 	UeContextInSmfData                *models.UeContextInSmfData
 	TraceData                         *models.TraceData
 	UdmGroupId                        string

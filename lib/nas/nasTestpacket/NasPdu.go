@@ -193,7 +193,6 @@ func GetUlNasTransport_PduSessionModificationRequest(pduSessionId uint8, request
 	ulNasTransport.RequestType.SetRequestTypeValue(requestType)
 	if dnnString != "" {
 		dnn := []byte(dnnString)
-		fmt.Println("dnn value", dnn)
 		ulNasTransport.DNN = new(nasType.DNN)
 		ulNasTransport.DNN.SetIei(nasMessage.ULNASTransportDNNType)
 		ulNasTransport.DNN.SetLen(uint8(len(dnn)))

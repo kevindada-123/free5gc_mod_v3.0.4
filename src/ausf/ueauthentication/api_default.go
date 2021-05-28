@@ -24,7 +24,7 @@ import (
 // HTTPEapAuthMethod -
 func HTTPEapAuthMethod(ctx *gin.Context) {
 	var eapSessionReq models.EapSession
-	logger.Auth5gAkaComfirmLog.Debugln("func : HTTPEapAuthMethod")
+
 	requestBody, err := ctx.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{
@@ -73,7 +73,7 @@ func HTTPEapAuthMethod(ctx *gin.Context) {
 // HTTPUeAuthenticationsAuthCtxID5gAkaConfirmationPut -
 func HTTPUeAuthenticationsAuthCtxID5gAkaConfirmationPut(ctx *gin.Context) {
 	var confirmationData models.ConfirmationData
-	logger.Auth5gAkaComfirmLog.Debugln("func : HTTPUeAuthenticationsAuthCtxID5gAkaConfirmationPut")
+
 	requestBody, err := ctx.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{
@@ -122,7 +122,7 @@ func HTTPUeAuthenticationsAuthCtxID5gAkaConfirmationPut(ctx *gin.Context) {
 // HTTPUeAuthenticationsPost -
 func HTTPUeAuthenticationsPost(ctx *gin.Context) {
 	var authInfo models.AuthenticationInfo
-	logger.Auth5gAkaComfirmLog.Debugln("func : HTTPUeAuthenticationsPost")
+
 	requestBody, err := ctx.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{

@@ -24,7 +24,7 @@ import (
 func HTTPDeleteSubscription(c *gin.Context) {
 	req := http_wrapper.NewRequest(c.Request, nil)
 	req.Params["subscriptionId"] = c.Param("subscriptionId")
-	logger.EeLog.Debugln("func : HTTPDeleteSubscription")
+
 	rsp := producer.HandleDeleteAMFEventSubscription(req)
 
 	if rsp.Status == http.StatusOK {
@@ -48,7 +48,7 @@ func HTTPDeleteSubscription(c *gin.Context) {
 // ModifySubscription - Namf_EventExposure Subscribe Modify service Operation
 func HTTPModifySubscription(c *gin.Context) {
 	var modifySubscriptionRequest models.ModifySubscriptionRequest
-	logger.EeLog.Debugln("func : HTTPModifySubscription")
+
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.EeLog.Errorf("Get Request Body error: %+v", err)

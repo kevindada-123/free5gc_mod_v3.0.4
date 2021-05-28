@@ -1,6 +1,7 @@
 package context
 
 import (
+	"fmt"
 	"free5gc/lib/pfcp/pfcpType"
 	"free5gc/src/smaf/factory"
 	"free5gc/src/smaf/logger"
@@ -40,10 +41,10 @@ type UPNode struct {
 type UPPath []*UPNode
 
 func AllocateUPFID() {
-	UPFsID := smafContext.UserPlaneInformation.UPFsID
-	UPFsIPtoID := smafContext.UserPlaneInformation.UPFsIPtoID
+	UPFsID := smfContext.UserPlaneInformation.UPFsID
+	UPFsIPtoID := smfContext.UserPlaneInformation.UPFsIPtoID
 
-	for upfName, upfNode := range smafContext.UserPlaneInformation.UPFs {
+	for upfName, upfNode := range smfContext.UserPlaneInformation.UPFs {
 		upfid := upfNode.UPF.UUID()
 		upfip := upfNode.NodeID.ResolveNodeIdToIp().String()
 
@@ -234,7 +235,7 @@ func (upi *UserPlaneInformation) GenerateDefaultPath(dnn string) bool {
 	}
 
 	for _, node := range upi.UPFs {
-
+		fmt.Printf("upi.UPFs : %+v \n", node)
 		if node.UPF.UPIPInfo.NetworkInstance != nil {
 			node_dnn := string(node.UPF.UPIPInfo.NetworkInstance)
 			if node_dnn == dnn {

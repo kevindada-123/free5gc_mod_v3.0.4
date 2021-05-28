@@ -13,12 +13,10 @@ type NfType string
 
 // List of NFType
 const (
-	NfType_NRF NfType = "NRF"
-	NfType_UDM NfType = "UDM"
-	NfType_AMF NfType = "AMF"
-	NfType_SMF NfType = "SMF"
-	//20210430 kevin
-	NfType_SMAF     NfType = "SMAF"
+	NfType_NRF      NfType = "NRF"
+	NfType_UDM      NfType = "UDM"
+	NfType_AMF      NfType = "AMF"
+	NfType_SMF      NfType = "SMF"
 	NfType_AUSF     NfType = "AUSF"
 	NfType_NEF      NfType = "NEF"
 	NfType_PCF      NfType = "PCF"

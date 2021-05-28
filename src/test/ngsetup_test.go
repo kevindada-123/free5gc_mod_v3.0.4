@@ -14,9 +14,9 @@ import (
 	nrf_service "free5gc/src/nrf/service"
 	nssf_service "free5gc/src/nssf/service"
 	pcf_service "free5gc/src/pcf/service"
+	smaf_service "free5gc/src/smaf/service"
 
 	//smf_service "free5gc/src/smf/service"
-	smaf_service "free5gc/src/smaf/service"
 	"free5gc/src/test"
 	udm_service "free5gc/src/udm/service"
 	udr_service "free5gc/src/udr/service"
@@ -34,8 +34,8 @@ var NFs = []app.NetworkFunction{
 	&nrf_service.NRF{},
 	&amf_service.AMF{},
 	//&smf_service.SMF{},
-	//20210504 kevin
-	&smaf_service.SMAF{},
+	//20210528
+	&smaf_service.SMF{},
 	&udr_service.UDR{},
 	&pcf_service.PCF{},
 	&udm_service.UDM{},
@@ -55,23 +55,22 @@ func init() {
 
 	if init {
 		app.AppInitializeWillInitialize("")
-		flagSet := flag.NewFlagSet("free5gc", 0)
-		flagSet.String("smfcfg", "", "SMF Config Path")
-		cli := cli.NewContext(nil, flagSet, nil)
-		err := cli.Set("smfcfg", path_util.Gofree5gcPath("free5gc/config/test/smfcfg.test.conf"))
-		if err != nil {
-			log.Fatal("SMF test config error")
-			return
-		}
-		//20210517
-		//flagSet2 := flag.NewFlagSet("free5gc", 0)
-		//flagSet2.String("smafcfg", "", "SMAF Config Path")
-		//cli2 := cli.NewContext(nil, flagSet2, nil)
-		//err2 := cli2.Set("smafcfg", path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf"))
-		//if err2 != nil {
-		//	log.Fatal("SMAF test config error")
+		//flagSet := flag.NewFlagSet("free5gc", 0)
+		//flagSet.String("smfcfg", "", "SMF Config Path")
+		//cli := cli.NewContext(nil, flagSet, nil)
+		//err := cli.Set("smfcfg", path_util.Gofree5gcPath("free5gc/config/test/smfcfg.test.conf"))
+		//if err != nil {
+		//	log.Fatal("SMF test config error")
 		//	return
 		//}
+		flagSet := flag.NewFlagSet("free5gc", 0)
+		flagSet.String("smafcfg", "", "SMAF Config Path")
+		cli := cli.NewContext(nil, flagSet, nil)
+		err := cli.Set("smafcfg", path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf"))
+		if err != nil {
+			log.Fatal("SMAF test config error")
+			return
+		}
 
 		for _, service := range NFs {
 			service.Initialize(cli)

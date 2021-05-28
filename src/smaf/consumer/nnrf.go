@@ -7,7 +7,7 @@ import (
 	"free5gc/lib/openapi/Nnrf_NFDiscovery"
 	"free5gc/lib/openapi/Nudm_SubscriberDataManagement"
 	"free5gc/lib/openapi/models"
-	smaf_context "free5gc/src/smaf/context"
+	smf_context "free5gc/src/smaf/context"
 	"free5gc/src/smaf/logger"
 	"net/http"
 
@@ -22,12 +22,12 @@ func SendNFRegistration() error {
 
 	//set nfProfile
 	profile := models.NfProfile{
-		NfInstanceId:  smaf_context.SMAF_Self().NfInstanceID,
-		NfType:        models.NfType_SMAF,
+		NfInstanceId:  smf_context.SMF_Self().NfInstanceID,
+		NfType:        models.NfType_SMF,
 		NfStatus:      models.NfStatus_REGISTERED,
-		Ipv4Addresses: []string{smaf_context.SMAF_Self().RegisterIPv4},
-		NfServices:    smaf_context.NFServices,
-		SmafInfo:      smaf_context.SmafInfo,
+		Ipv4Addresses: []string{smf_context.SMF_Self().RegisterIPv4},
+		NfServices:    smf_context.NFServices,
+		SmfInfo:       smf_context.SmfInfo,
 	}
 	var rep models.NfProfile
 	var res *http.Response
@@ -35,12 +35,12 @@ func SendNFRegistration() error {
 
 	// Check data (Use RESTful PUT)
 	for {
-		rep, res, err = smaf_context.SMAF_Self().
+		rep, res, err = smf_context.SMF_Self().
 			NFManagementClient.
 			NFInstanceIDDocumentApi.
-			RegisterNFInstance(context.TODO(), smaf_context.SMAF_Self().NfInstanceID, profile)
+			RegisterNFInstance(context.TODO(), smf_context.SMF_Self().NfInstanceID, profile)
 		if err != nil || res == nil {
-			logger.AppLog.Infof("SMAF register to NRF Error[%s]", err.Error())
+			logger.AppLog.Infof("SMF register to NRF Error[%s]", err.Error())
 			time.Sleep(2 * time.Second)
 			continue
 		}
@@ -53,7 +53,7 @@ func SendNFRegistration() error {
 			// NFRegister
 			resourceUri := res.Header.Get("Location")
 			// resouceNrfUri := resourceUri[strings.LastIndex(resourceUri, "/"):]
-			smaf_context.SMAF_Self().NfInstanceID = resourceUri[strings.LastIndex(resourceUri, "/")+1:]
+			smf_context.SMF_Self().NfInstanceID = resourceUri[strings.LastIndex(resourceUri, "/")+1:]
 			break
 		} else {
 			logger.AppLog.Infof("handler returned wrong status code %d", status)
@@ -83,10 +83,10 @@ func RetrySendNFRegistration(MaxRetry int) error {
 func SendNFDeregistration() error {
 
 	// Check data (Use RESTful DELETE)
-	res, localErr := smaf_context.SMAF_Self().
+	res, localErr := smf_context.SMF_Self().
 		NFManagementClient.
 		NFInstanceIDDocumentApi.
-		DeregisterNFInstance(context.TODO(), smaf_context.SMAF_Self().NfInstanceID)
+		DeregisterNFInstance(context.TODO(), smf_context.SMF_Self().NfInstanceID)
 	if localErr != nil {
 		logger.AppLog.Warnln(localErr)
 		return localErr
@@ -105,23 +105,23 @@ func SendNFDiscoveryUDM() (*models.ProblemDetails, error) {
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
 	// Check data
-	result, httpResp, localErr := smaf_context.SMAF_Self().
+	result, httpResp, localErr := smf_context.SMF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
-		SearchNFInstances(context.TODO(), models.NfType_UDM, models.NfType_SMAF, &localVarOptionals)
+		SearchNFInstances(context.TODO(), models.NfType_UDM, models.NfType_SMF, &localVarOptionals)
 
 	if localErr == nil {
-		smaf_context.SMAF_Self().UDMProfile = result.NfInstances[0]
+		smf_context.SMF_Self().UDMProfile = result.NfInstances[0]
 
-		for _, service := range *smaf_context.SMAF_Self().UDMProfile.NfServices {
+		for _, service := range *smf_context.SMF_Self().UDMProfile.NfServices {
 			if service.ServiceName == models.ServiceName_NUDM_SDM {
 				SDMConf := Nudm_SubscriberDataManagement.NewConfiguration()
 				SDMConf.SetBasePath(service.ApiPrefix)
-				smaf_context.SMAF_Self().SubscriberDataManagementClient = Nudm_SubscriberDataManagement.NewAPIClient(SDMConf)
+				smf_context.SMF_Self().SubscriberDataManagementClient = Nudm_SubscriberDataManagement.NewAPIClient(SDMConf)
 			}
 		}
 
-		if smaf_context.SMAF_Self().SubscriberDataManagementClient == nil {
+		if smf_context.SMF_Self().SubscriberDataManagementClient == nil {
 			logger.AppLog.Warnln("sdm client failed")
 		}
 	} else if httpResp != nil {
@@ -142,11 +142,11 @@ func SendNFDiscoveryPCF() (problemDetails *models.ProblemDetails, err error) {
 	// Set targetNfType
 	targetNfType := models.NfType_PCF
 	// Set requestNfType
-	requesterNfType := models.NfType_SMAF
+	requesterNfType := models.NfType_SMF
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
 	// Check data
-	result, httpResp, localErr := smaf_context.SMAF_Self().
+	result, httpResp, localErr := smf_context.SMF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
 		SearchNFInstances(context.TODO(), targetNfType, requesterNfType, &localVarOptionals)
@@ -168,16 +168,16 @@ func SendNFDiscoveryPCF() (problemDetails *models.ProblemDetails, err error) {
 	return
 }
 
-func SendNFDiscoveryServingAMF(smContext *smaf_context.SMContext) (*models.ProblemDetails, error) {
+func SendNFDiscoveryServingAMF(smContext *smf_context.SMContext) (*models.ProblemDetails, error) {
 	targetNfType := models.NfType_AMF
-	requesterNfType := models.NfType_SMAF
+	requesterNfType := models.NfType_SMF
 
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
 	localVarOptionals.TargetNfInstanceId = optional.NewInterface(smContext.ServingNfId)
 
 	// Check data
-	result, httpResp, localErr := smaf_context.SMAF_Self().
+	result, httpResp, localErr := smf_context.SMF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
 		SearchNFInstances(context.TODO(), targetNfType, requesterNfType, &localVarOptionals)
@@ -209,16 +209,16 @@ func SendNFDiscoveryServingAMF(smContext *smaf_context.SMContext) (*models.Probl
 func SendDeregisterNFInstance() (*models.ProblemDetails, error) {
 	logger.AppLog.Infof("Send Deregister NFInstance")
 
-	smafSelf := smaf_context.SMAF_Self()
+	smfSelf := smf_context.SMF_Self()
 	// Set client and set url
 
 	var res *http.Response
 
 	var err error
-	res, err = smafSelf.
+	res, err = smfSelf.
 		NFManagementClient.
 		NFInstanceIDDocumentApi.
-		DeregisterNFInstance(context.Background(), smafSelf.NfInstanceID)
+		DeregisterNFInstance(context.Background(), smfSelf.NfInstanceID)
 	if err == nil {
 		return nil, err
 	} else if res != nil {

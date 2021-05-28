@@ -15,10 +15,10 @@ type UEPreConfigPaths struct {
 
 func NewUEDataPathNode(name string) (node *DataPathNode, err error) {
 
-	upNodes := smafContext.UserPlaneInformation.UPNodes
+	upNodes := smfContext.UserPlaneInformation.UPNodes
 
 	if _, exist := upNodes[name]; !exist {
-		err = fmt.Errorf("UPNode %s isn't exist in smafcfg.conf, but in UERouting.yaml!", name)
+		err = fmt.Errorf("UPNode %s isn't exist in smfcfg.conf, but in UERouting.yaml!", name)
 		return nil, err
 	}
 
@@ -107,12 +107,12 @@ func NewUEPreConfigPaths(SUPI string, paths []factory.Path) (*UEPreConfigPaths, 
 }
 
 func GetUEPreConfigPaths(SUPI string) *UEPreConfigPaths {
-	return smafContext.UEPreConfigPathPool[SUPI]
+	return smfContext.UEPreConfigPathPool[SUPI]
 }
 
 func CheckUEHasPreConfig(SUPI string) (exist bool) {
-	_, exist = smafContext.UEPreConfigPathPool[SUPI]
+	_, exist = smfContext.UEPreConfigPathPool[SUPI]
 	fmt.Println("CheckUEHasPreConfig")
-	fmt.Println(smafContext.UEPreConfigPathPool)
+	fmt.Println(smfContext.UEPreConfigPathPool)
 	return
 }

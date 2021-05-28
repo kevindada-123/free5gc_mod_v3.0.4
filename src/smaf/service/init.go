@@ -29,25 +29,25 @@ import (
 	"free5gc/src/smaf/util"
 )
 
-type SMAF struct{}
+type SMF struct{}
 
 type (
 	// Config information.
 	Config struct {
-		smafcfg   string
+		smfcfg    string
 		uerouting string
 	}
 )
 
 var config Config
 
-var smafCLi = []cli.Flag{
+var smfCLi = []cli.Flag{
 	cli.StringFlag{
 		Name:  "free5gccfg",
 		Usage: "common config file",
 	},
 	cli.StringFlag{
-		Name:  "smafcfg",
+		Name:  "smfcfg",
 		Usage: "config file",
 	},
 	cli.StringFlag{
@@ -62,25 +62,22 @@ func init() {
 	initLog = logger.InitLog
 }
 
-func (*SMAF) GetCliCmd() (flags []cli.Flag) {
-	return smafCLi
+func (*SMF) GetCliCmd() (flags []cli.Flag) {
+	return smfCLi
 }
 
-func (*SMAF) Initialize(c *cli.Context) {
+func (*SMF) Initialize(c *cli.Context) {
 
 	config = Config{
-		smafcfg:   c.String("smafcfg"),
+		smfcfg:    c.String("smafcfg"),
 		uerouting: c.String("uerouting"),
 	}
 
-	if config.smafcfg != "" {
-		factory.InitConfigFactory(config.smafcfg)
+	if config.smfcfg != "" {
+		factory.InitConfigFactory(config.smfcfg)
 	} else {
-		//DefaultSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
-		//factory.InitConfigFactory(DefaultSmafConfigPath)
-		//20210517
-		testSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf")
-		factory.InitConfigFactory(testSmafConfigPath)
+		DefaultSmfConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
+		factory.InitConfigFactory(DefaultSmfConfigPath)
 	}
 
 	if config.uerouting != "" {
@@ -90,10 +87,10 @@ func (*SMAF) Initialize(c *cli.Context) {
 		factory.InitRoutingConfigFactory(DefaultUERoutingPath)
 	}
 
-	if app.ContextSelf().Logger.SMAF.DebugLevel != "" {
-		level, err := logrus.ParseLevel(app.ContextSelf().Logger.SMAF.DebugLevel)
+	if app.ContextSelf().Logger.SMF.DebugLevel != "" {
+		level, err := logrus.ParseLevel(app.ContextSelf().Logger.SMF.DebugLevel)
 		if err != nil {
-			initLog.Warnf("Log level [%s] is not valid, set to [info] level", app.ContextSelf().Logger.SMAF.DebugLevel)
+			initLog.Warnf("Log level [%s] is not valid, set to [info] level", app.ContextSelf().Logger.SMF.DebugLevel)
 			logger.SetLogLevel(logrus.InfoLevel)
 		} else {
 			logger.SetLogLevel(level)
@@ -103,11 +100,11 @@ func (*SMAF) Initialize(c *cli.Context) {
 		initLog.Infoln("Log level is default set to [info] level")
 		logger.SetLogLevel(logrus.InfoLevel)
 	}
-	logger.SetReportCaller(app.ContextSelf().Logger.SMAF.ReportCaller)
+	logger.SetReportCaller(app.ContextSelf().Logger.SMF.ReportCaller)
 }
 
-func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
-	for _, flag := range smaf.GetCliCmd() {
+func (smf *SMF) FilterCli(c *cli.Context) (args []string) {
+	for _, flag := range smf.GetCliCmd() {
 		name := flag.GetName()
 		value := fmt.Sprint(c.Generic(name))
 		if value == "" {
@@ -119,11 +116,11 @@ func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
 	return args
 }
 
-func (smaf *SMAF) Start() {
-	context.InitSmafContext(&factory.SmafConfig)
+func (smf *SMF) Start() {
+	context.InitSmfContext(&factory.SmfConfig)
 	//allocate id for each upf
 	context.AllocateUPFID()
-	context.InitSMAFUERouting(&factory.UERoutingConfig)
+	context.InitSMFUERouting(&factory.UERoutingConfig)
 
 	initLog.Infoln("Server started")
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
@@ -131,44 +128,42 @@ func (smaf *SMAF) Start() {
 	err := consumer.SendNFRegistration()
 
 	if err != nil {
-		retry_err := consumer.RetrySendNFRegistration(10) //最多註冊10次
+		retry_err := consumer.RetrySendNFRegistration(10)
 		if retry_err != nil {
 			logger.InitLog.Errorln(retry_err)
 			return
 		}
 	}
 
-	//這裡為宣告 1 個 channel buffer，意思就是可以quene 1個 os.Signal
 	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM) //	SIGTERM : 结束程序(可以被捕获、阻塞或忽略)
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-signalChannel
-		smaf.Terminate()
+		smf.Terminate()
 		os.Exit(0)
 	}()
 
 	oam.AddService(router)
 	callback.AddService(router)
-	for _, serviceName := range factory.SmafConfig.Configuration.ServiceNameList {
+	for _, serviceName := range factory.SmfConfig.Configuration.ServiceNameList {
 		switch models.ServiceName(serviceName) {
-		case models.ServiceName_NSMAF_PDUSESSION:
+		case models.ServiceName_NSMF_PDUSESSION:
 			pdusession.AddService(router)
-		case models.ServiceName_NSMAF_EVENT_EXPOSURE:
+		case models.ServiceName_NSMF_EVENT_EXPOSURE:
 			eventexposure.AddService(router)
 		}
 	}
 	udp.Run(pfcp.Dispatch)
 
-	for _, upf := range context.SMAF_Self().UserPlaneInformation.UPFs {
+	for _, upf := range context.SMF_Self().UserPlaneInformation.UPFs {
 		logger.AppLog.Infof("Send PFCP Association Request to UPF[%s]\n", upf.NodeID.NodeIdValue)
-		fmt.Println(upf.NodeID)
 		message.SendPfcpAssociationSetupRequest(upf.NodeID)
 	}
 
-	time.Sleep(1000 * time.Millisecond) //20210501 :wait 1 sec
+	time.Sleep(1000 * time.Millisecond)
 
-	HTTPAddr := fmt.Sprintf("%s:%d", context.SMAF_Self().BindingIPv4, context.SMAF_Self().SBIPort)
-	server, err := http2_util.NewServer(HTTPAddr, util.SmafLogPath, router)
+	HTTPAddr := fmt.Sprintf("%s:%d", context.SMF_Self().BindingIPv4, context.SMF_Self().SBIPort)
+	server, err := http2_util.NewServer(HTTPAddr, util.SmfLogPath, router)
 
 	if server == nil {
 		initLog.Error("Initialize HTTP server failed:", err)
@@ -179,11 +174,11 @@ func (smaf *SMAF) Start() {
 		initLog.Warnln("Initialize HTTP server:", err)
 	}
 
-	serverScheme := factory.SmafConfig.Configuration.Sbi.Scheme
+	serverScheme := factory.SmfConfig.Configuration.Sbi.Scheme
 	if serverScheme == "http" {
 		err = server.ListenAndServe()
 	} else if serverScheme == "https" {
-		err = server.ListenAndServeTLS(util.SmafPemPath, util.SmafKeyPath)
+		err = server.ListenAndServeTLS(util.SmfPemPath, util.SmfKeyPath)
 	}
 
 	if err != nil {
@@ -192,8 +187,8 @@ func (smaf *SMAF) Start() {
 
 }
 
-func (smaf *SMAF) Terminate() {
-	logger.InitLog.Infof("Terminating SMAF...")
+func (smf *SMF) Terminate() {
+	logger.InitLog.Infof("Terminating SMF...")
 	// deregister with NRF
 	problemDetails, err := consumer.SendDeregisterNFInstance()
 	if problemDetails != nil {
@@ -205,6 +200,6 @@ func (smaf *SMAF) Terminate() {
 	}
 }
 
-func (smaf *SMAF) Exec(c *cli.Context) error {
+func (smf *SMF) Exec(c *cli.Context) error {
 	return nil
 }

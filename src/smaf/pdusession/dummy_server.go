@@ -18,17 +18,17 @@ func DummyServer() {
 
 	go udp.Run(pfcp.Dispatch)
 
-	smafKeyLogPath := path_util.Gofree5gcPath("free5gc/smafsslkey.log")
-	smafPemPath := path_util.Gofree5gcPath("free5gc/support/TLS/smaf.pem")
-	smafkeyPath := path_util.Gofree5gcPath("free5gc/support/TLS/smaf.key")
+	smfKeyLogPath := path_util.Gofree5gcPath("free5gc/smfsslkey.log")
+	smfPemPath := path_util.Gofree5gcPath("free5gc/support/TLS/smf.pem")
+	smfkeyPath := path_util.Gofree5gcPath("free5gc/support/TLS/smf.key")
 
 	var server *http.Server
-	if srv, err := http2_util.NewServer(":29502", smafKeyLogPath, router); err != nil {
+	if srv, err := http2_util.NewServer(":29502", smfKeyLogPath, router); err != nil {
 	} else {
 		server = srv
 	}
 
-	if err := server.ListenAndServeTLS(smafPemPath, smafkeyPath); err != nil {
+	if err := server.ListenAndServeTLS(smfPemPath, smfkeyPath); err != nil {
 		log.Fatal(err)
 	}
 

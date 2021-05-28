@@ -31,7 +31,7 @@ func NewRouter() *gin.Engine {
 }
 
 func AddService(engine *gin.Engine) *gin.RouterGroup {
-	group := engine.Group("/nsmaf-oam/v1")
+	group := engine.Group("/nsmf-oam/v1")
 
 	for _, route := range routes {
 		switch route.Method {

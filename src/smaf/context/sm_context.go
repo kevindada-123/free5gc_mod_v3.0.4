@@ -226,10 +226,10 @@ func (smContext *SMContext) PCFSelection() error {
 	// Send NFDiscovery for find PCF
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
-	rep, res, err := SMAF_Self().
+	rep, res, err := SMF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
-		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMAF, &localVarOptionals)
+		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMF, &localVarOptionals)
 	if err != nil {
 		return err
 	}
@@ -384,7 +384,7 @@ func (smContext *SMContext) isAllowedPDUSessionType(nasPDUSessionType uint8) boo
 
 // SM Policy related operation
 
-// SelectedSessionRule - return the SMAF selected session rule for this SM Context
+// SelectedSessionRule - return the SMF selected session rule for this SM Context
 func (smContext *SMContext) SelectedSessionRule() *SessionRule {
 	for _, sessionRule := range smContext.SessionRules {
 		if sessionRule.isActivate {

@@ -1,5 +1,5 @@
 /*
- * Nsmaf_EventExposure
+ * Nsmf_EventExposure
  *
  * Session Management Event Exposure Service API
  *

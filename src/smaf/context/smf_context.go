@@ -20,12 +20,12 @@ import (
 )
 
 func init() {
-	smafContext.NfInstanceID = uuid.New().String()
+	smfContext.NfInstanceID = uuid.New().String()
 }
 
-var smafContext SMAFContext
+var smfContext SMFContext
 
-type SMAFContext struct {
+type SMFContext struct {
 	Name         string
 	NfInstanceID string
 
@@ -37,7 +37,7 @@ type SMAFContext struct {
 
 	UDMProfile models.NfProfile
 
-	SnssaiInfos []models.SnssaiSmafInfoItem
+	SnssaiInfos []models.SnssaiSmfInfoItem
 
 	UPNodeIDs []pfcpType.NodeID
 	Key       string
@@ -64,27 +64,27 @@ type SMAFContext struct {
 }
 
 func AllocUEIP() net.IP {
-	smafContext.UEAddressLock.Lock()
-	defer smafContext.UEAddressLock.Unlock()
-	smafContext.UEAddressTemp[3]++
-	return smafContext.UEAddressTemp
+	smfContext.UEAddressLock.Lock()
+	defer smfContext.UEAddressLock.Unlock()
+	smfContext.UEAddressTemp[3]++
+	return smfContext.UEAddressTemp
 }
 
 func AllocateLocalSEID() uint64 {
-	atomic.AddUint64(&smafContext.LocalSEIDCount, 1)
-	return smafContext.LocalSEIDCount
+	atomic.AddUint64(&smfContext.LocalSEIDCount, 1)
+	return smfContext.LocalSEIDCount
 }
 
-func InitSmafContext(config *factory.Config) {
+func InitSmfContext(config *factory.Config) {
 	if config == nil {
 		logger.CtxLog.Error("Config is nil")
 		return
 	}
 
-	logger.CtxLog.Infof("smafconfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
+	logger.CtxLog.Infof("smfconfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
 	configuration := config.Configuration
-	if configuration.SmafName != "" {
-		smafContext.Name = configuration.SmafName
+	if configuration.SmfName != "" {
+		smfContext.Name = configuration.SmfName
 	}
 
 	sbi := configuration.Sbi
@@ -92,38 +92,38 @@ func InitSmafContext(config *factory.Config) {
 		logger.CtxLog.Errorln("Configuration needs \"sbi\" value")
 		return
 	} else {
-		smafContext.URIScheme = models.UriScheme(sbi.Scheme)
-		smafContext.RegisterIPv4 = "127.0.0.1" // default localhost
-		smafContext.SBIPort = 23138            // default port
+		smfContext.URIScheme = models.UriScheme(sbi.Scheme)
+		smfContext.RegisterIPv4 = "127.0.0.1" // default localhost
+		smfContext.SBIPort = 29502            // default port
 		if sbi.RegisterIPv4 != "" {
-			smafContext.RegisterIPv4 = sbi.RegisterIPv4
+			smfContext.RegisterIPv4 = sbi.RegisterIPv4
 		}
 		if sbi.Port != 0 {
-			smafContext.SBIPort = sbi.Port
+			smfContext.SBIPort = sbi.Port
 		}
 
 		if tls := sbi.TLS; tls != nil {
-			smafContext.Key = tls.Key
-			smafContext.PEM = tls.PEM
+			smfContext.Key = tls.Key
+			smfContext.PEM = tls.PEM
 		}
 
-		smafContext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
-		if smafContext.BindingIPv4 != "" {
+		smfContext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
+		if smfContext.BindingIPv4 != "" {
 			logger.CtxLog.Info("Parsing ServerIPv4 address from ENV Variable.")
 		} else {
-			smafContext.BindingIPv4 = sbi.BindingIPv4
-			if smafContext.BindingIPv4 == "" {
+			smfContext.BindingIPv4 = sbi.BindingIPv4
+			if smfContext.BindingIPv4 == "" {
 				logger.CtxLog.Warn("Error parsing ServerIPv4 address as string. Using the 0.0.0.0 address as default.")
-				smafContext.BindingIPv4 = "0.0.0.0"
+				smfContext.BindingIPv4 = "0.0.0.0"
 			}
 		}
 	}
 
 	if configuration.NrfUri != "" {
-		smafContext.NrfUri = configuration.NrfUri
+		smfContext.NrfUri = configuration.NrfUri
 	} else {
 		logger.CtxLog.Warn("NRF Uri is empty! Using localhost as NRF IPv4 address.")
-		smafContext.NrfUri = fmt.Sprintf("%s://%s:%d", smafContext.URIScheme, "127.0.0.1", 29510)
+		smfContext.NrfUri = fmt.Sprintf("%s://%s:%d", smfContext.URIScheme, "127.0.0.1", 29510)
 	}
 
 	if pfcp := configuration.PFCP; pfcp != nil {
@@ -144,8 +144,8 @@ func InitSmafContext(config *factory.Config) {
 			logger.CtxLog.Warnf("PFCP Parse Addr Fail: %v", err)
 		}
 
-		smafContext.CPNodeID.NodeIdType = 0
-		smafContext.CPNodeID.NodeIdValue = addr.IP.To4()
+		smfContext.CPNodeID.NodeIdType = 0
+		smfContext.CPNodeID.NodeIdValue = addr.IP.To4()
 	}
 
 	_, ipNet, err := net.ParseCIDR(configuration.UESubnet)
@@ -153,33 +153,33 @@ func InitSmafContext(config *factory.Config) {
 		logger.InitLog.Errorln(err)
 	}
 
-	smafContext.DNNInfo = configuration.DNN
-	smafContext.UESubNet = ipNet
-	smafContext.UEAddressTemp = ipNet.IP
+	smfContext.DNNInfo = configuration.DNN
+	smfContext.UESubNet = ipNet
+	smfContext.UEAddressTemp = ipNet.IP
 
 	// Set client and set url
 	ManagementConfig := Nnrf_NFManagement.NewConfiguration()
-	ManagementConfig.SetBasePath(SMAF_Self().NrfUri)
-	smafContext.NFManagementClient = Nnrf_NFManagement.NewAPIClient(ManagementConfig)
+	ManagementConfig.SetBasePath(SMF_Self().NrfUri)
+	smfContext.NFManagementClient = Nnrf_NFManagement.NewAPIClient(ManagementConfig)
 
 	NFDiscovryConfig := Nnrf_NFDiscovery.NewConfiguration()
-	NFDiscovryConfig.SetBasePath(SMAF_Self().NrfUri)
-	smafContext.NFDiscoveryClient = Nnrf_NFDiscovery.NewAPIClient(NFDiscovryConfig)
+	NFDiscovryConfig.SetBasePath(SMF_Self().NrfUri)
+	smfContext.NFDiscoveryClient = Nnrf_NFDiscovery.NewAPIClient(NFDiscovryConfig)
 
-	smafContext.ULCLSupport = configuration.ULCL
+	smfContext.ULCLSupport = configuration.ULCL
 
-	smafContext.SnssaiInfos = configuration.SNssaiInfo
+	smfContext.SnssaiInfos = configuration.SNssaiInfo
 
-	smafContext.OnlySupportIPv4 = true
+	smfContext.OnlySupportIPv4 = true
 
-	smafContext.UserPlaneInformation = NewUserPlaneInformation(&configuration.UserPlaneInformation)
+	smfContext.UserPlaneInformation = NewUserPlaneInformation(&configuration.UserPlaneInformation)
 
 	SetupNFProfile(config)
 }
 
-func InitSMAFUERouting(routingConfig *factory.RoutingConfig) {
+func InitSMFUERouting(routingConfig *factory.RoutingConfig) {
 
-	if !smafContext.ULCLSupport {
+	if !smfContext.ULCLSupport {
 		return
 	}
 
@@ -192,7 +192,7 @@ func InitSMAFUERouting(routingConfig *factory.RoutingConfig) {
 		routingConfig.Info.Version, routingConfig.Info.Description)
 
 	UERoutingInfo := routingConfig.UERoutingInfo
-	smafContext.UEPreConfigPathPool = make(map[string]*UEPreConfigPaths)
+	smfContext.UEPreConfigPathPool = make(map[string]*UEPreConfigPaths)
 
 	for _, routingInfo := range UERoutingInfo {
 		supi := routingInfo.SUPI
@@ -202,15 +202,15 @@ func InitSMAFUERouting(routingConfig *factory.RoutingConfig) {
 			continue
 		}
 
-		smafContext.UEPreConfigPathPool[supi] = uePreConfigPaths
+		smfContext.UEPreConfigPathPool[supi] = uePreConfigPaths
 	}
 
 }
 
-func SMAF_Self() *SMAFContext {
-	return &smafContext
+func SMF_Self() *SMFContext {
+	return &smfContext
 }
 
 func GetUserPlaneInformation() *UserPlaneInformation {
-	return smafContext.UserPlaneInformation
+	return smfContext.UserPlaneInformation
 }

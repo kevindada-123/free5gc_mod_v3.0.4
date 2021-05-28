@@ -9,7 +9,7 @@ import (
 	"free5gc/lib/pfcp/pfcpType"
 	"free5gc/lib/pfcp/pfcpUdp"
 	"free5gc/src/smaf/context"
-	smaf_pfcp "free5gc/src/smaf/pfcp"
+	smf_pfcp "free5gc/src/smaf/pfcp"
 	"free5gc/src/smaf/pfcp/udp"
 
 	"github.com/stretchr/testify/require"
@@ -18,14 +18,14 @@ import (
 const testPfcpClientPort = 12345
 
 func TestRun(t *testing.T) {
-	// Set SMAF Node ID
+	// Set SMF Node ID
 
-	context.SMAF_Self().CPNodeID = pfcpType.NodeID{
+	context.SMF_Self().CPNodeID = pfcpType.NodeID{
 		NodeIdType:  pfcpType.NodeIdTypeIpv4Address,
 		NodeIdValue: net.ParseIP("127.0.0.1").To4(),
 	}
 
-	udp.Run(smaf_pfcp.Dispatch)
+	udp.Run(smf_pfcp.Dispatch)
 
 	testPfcpReq := pfcp.Message{
 		Header: pfcp.Header{

@@ -48,7 +48,6 @@ func RestfulAPIGetMany(collName string, filter bson.M) []map[string]interface{} 
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	cur, err := collection.Find(ctx, filter)
-	//logger.MongoDBLog.Info(cur)
 	defer cancel()
 	if err != nil {
 		logger.MongoDBLog.Fatal(err)

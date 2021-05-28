@@ -41,8 +41,6 @@ func Dispatch(conn net.Conn, msg []byte) {
 	switch pdu.Present {
 	case ngapType.NGAPPDUPresentInitiatingMessage:
 		initiatingMessage := pdu.InitiatingMessage
-		//jsondata, _ := json.Marshal(initiatingMessage)
-		//logger.NgapLog.Info("show initiatingMessage : %s ", string(jsondata))
 		if initiatingMessage == nil {
 			Ngaplog.Errorln("Initiating Message is nil")
 			return

@@ -181,16 +181,9 @@ func HandlePDUSessionEstablishmentRequest(ue *context.AmfUe, anType models.Acces
 			dnn = amfSelf.SupportDnnLists[0]
 		}
 		pduSession.Dnn = dnn
-		//fmt.Printf("PDU session info %+v  \n", pduSession)
+
 		var smfID, smfUri string
-		//if smfIDTmp, smfUriTmp, err := selectSmf(ue, anType, &pduSession, payload); err != nil {
-		//	logger.GmmLog.Errorf("[AMF] SMF Selection for Snssai[%+v] Failed[%+v]", sNssai, err)
-		//	return err
-		//} else {
-		//	smfID = smfIDTmp
-		//	smfUri = smfUriTmp
-		//}
-		if smfIDTmp, smfUriTmp, err := selectSmaf(ue, anType, &pduSession, payload); err != nil {
+		if smfIDTmp, smfUriTmp, err := selectSmf(ue, anType, &pduSession, payload); err != nil {
 			logger.GmmLog.Errorf("[AMF] SMF Selection for Snssai[%+v] Failed[%+v]", sNssai, err)
 			return err
 		} else {
@@ -243,8 +236,7 @@ func HandlePDUSessionEstablishmentRequest(ue *context.AmfUe, anType models.Acces
 		smContextCreateData := consumer.BuildCreateSmContextRequest(ue, pduSession, requestType)
 
 		response, smContextRef, errResponse, problemDetail, err :=
-			//consumer.SendCreateSmContextRequest(ue, smfUri, payload, smContextCreateData)
-			consumer.SendCreateSmContextRequest_smaf(ue, smfUri, payload, smContextCreateData)
+			consumer.SendCreateSmContextRequest(ue, smfUri, payload, smContextCreateData)
 		if response != nil {
 			var smContext context.SmContext
 			pduSession.SmContextRef = smContextRef
@@ -395,82 +387,7 @@ func selectSmf(ue *context.AmfUe, anType models.AccessType, pduSession *models.P
 	}
 	return smfID, smfUri, nil
 }
-func selectSmaf(ue *context.AmfUe, anType models.AccessType, pduSession *models.PduSessionContext,
-	payload []byte) (string, string, error) {
 
-	var smafID string
-	var smafUri string
-
-	amfSelf := context.AMF_Self()
-	nrfUri := amfSelf.NrfUri // default NRF URI is pre-configured by AMF
-
-	nsiInformation := ue.GetNsiInformationFromSnssai(anType, *pduSession.SNssai)
-	if nsiInformation == nil {
-		if ue.NssfUri == "" {
-			// TODO: Set a timeout of NSSF Selection or will starvation here
-			for {
-				if err := consumer.SearchNssfNSSelectionInstance(ue, amfSelf.NrfUri, models.NfType_NSSF,
-					models.NfType_AMF, nil); err != nil {
-					logger.GmmLog.Errorf("AMF can not select an NSSF Instance by NRF[Error: %+v]", err)
-					time.Sleep(2 * time.Second)
-				} else {
-					break
-				}
-			}
-		}
-
-		response, problemDetails, err := consumer.NSSelectionGetForPduSession(ue, *pduSession.SNssai)
-		if problemDetails != nil {
-			logger.GmmLog.Errorf("NSSelection Get Failed Problem[%+v]", problemDetails)
-			err = errors.New("NSSelection Get Failed Problem")
-			return "", "", err
-		}
-		if err != nil {
-			logger.GmmLog.Errorf("NSSelection Get Error[%+v]", err)
-			return "", "", err
-		}
-		nsiInformation = response.NsiInformation
-	}
-
-	pduSession.NsInstance = nsiInformation.NsiId
-	nrfApiUrl, err := url.Parse(nsiInformation.NrfId)
-	if err != nil {
-		logger.GmmLog.Errorf("Parse NRF URI error, use default NRF[%s]", nrfUri)
-	} else {
-		nrfUri = fmt.Sprintf("%s://%s", nrfApiUrl.Scheme, nrfApiUrl.Host)
-	}
-
-	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{
-		ServiceNames: optional.NewInterface([]models.ServiceName{models.ServiceName_NSMAF_PDUSESSION}),
-		Dnn:          optional.NewString(pduSession.Dnn),
-		Snssais:      optional.NewInterface(util.MarshToJsonString([]models.Snssai{*pduSession.SNssai})),
-	}
-	if ue.PlmnId.Mcc != "" {
-		param.TargetPlmnList = optional.NewInterface(util.MarshToJsonString(ue.PlmnId))
-	}
-
-	logger.GmmLog.Debugf("Search SMAF from NRF[%s]", nrfUri)
-
-	result, err := consumer.SendSearchNFInstances(nrfUri, models.NfType_SMAF, models.NfType_AMF, &param)
-
-	if err != nil || len(result.NfInstances) == 0 {
-		logger.GmmLog.Errorln("number of result.NfInstances :", len(result.NfInstances))
-		err = fmt.Errorf("DNN[%s] is not support by network and AMF can not select an SMAF by NRF\n", pduSession.Dnn)
-		logger.GmmLog.Errorf(err.Error())
-		gmm_message.SendDLNASTransport(ue.RanUe[anType], nasMessage.PayloadContainerTypeN1SMInfo,
-			payload, pduSession.PduSessionId, nasMessage.Cause5GMMDNNNotSupportedOrNotSubscribedInTheSlice, nil, 0)
-		return "", "", err
-	}
-
-	// select the first SMAF, TODO: select base on other info
-	for _, nfProfile := range result.NfInstances {
-		smafUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NSMAF_PDUSESSION, models.NfServiceStatus_REGISTERED)
-		if smafUri != "" {
-			break
-		}
-	}
-	return smafID, smafUri, nil
-}
 func HandlePDUSessionModificationForward(ue *context.AmfUe, anType models.AccessType, payload []byte,
 	pduSessionID int32) error {
 
@@ -665,6 +582,7 @@ func HandleRegistrationRequest(ue *context.AmfUe, anType models.AccessType, proc
 	registrationRequest *nasMessage.RegistrationRequest) error {
 
 	logger.GmmLog.Info("[AMF] Handle Registration Request")
+
 	util.StopT3513(ue)
 	util.StopT3565(ue)
 
@@ -891,7 +809,7 @@ func HandleInitialRegistration(ue *context.AmfUe, anType models.AccessType) erro
 			}
 		}
 	}
-	logger.GmmLog.Debugln("ue pei", ue.Pei)
+
 	if len(ue.Pei) == 0 {
 		gmm_message.SendIdentityRequest(ue.RanUe[anType], nasMessage.MobileIdentity5GSTypeImei)
 		return nil
@@ -1773,7 +1691,6 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 
 	// TODO: consider ausf group id, Routing ID part of SUCI
 	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
-	//AMF透過NRF呼叫 AUSF 進行5GAKA
 	resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
 	if err != nil {
 		logger.GmmLog.Error("AMF can not select an AUSF by NRF")
@@ -2151,7 +2068,7 @@ func HandleAuthenticationResponse(ue *context.AmfUe, accessType models.AccessTyp
 				})
 			}
 		}
-		logger.GmmLog.Info("here AuthType__5_G_AKA")
+
 		response, problemDetails, err := consumer.SendAuth5gAkaConfirmRequest(ue, hex.EncodeToString(resStar[:]))
 		if err != nil {
 			return err
@@ -2192,7 +2109,7 @@ func HandleAuthenticationResponse(ue *context.AmfUe, accessType models.AccessTyp
 			logger.GmmLog.Debugf("EapAuthConfirm Error[Problem Detail: %+v]", problemDetails)
 			return nil
 		}
-		logger.GmmLog.Info("here AuthType_EAP_AKA_PRIME")
+
 		switch response.AuthResult {
 		case models.AuthResult_SUCCESS:
 			ue.UnauthenticatedSupi = false

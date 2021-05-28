@@ -15,14 +15,13 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func HTTPN1N2MessageSubscribe(c *gin.Context) {
 	var ueN1N2InfoSubscriptionCreateData models.UeN1N2InfoSubscriptionCreateData
-	logger.CommLog.Debugln(" func : HTTPN1N2MessageSubscribe")
+
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.CommLog.Errorf("Get Request Body error: %+v", err)

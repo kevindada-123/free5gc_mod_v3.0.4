@@ -1,5 +1,5 @@
 /*
- * Nsmaf_EventExposure
+ * Nsmf_EventExposure
  *
  * Session Management Event Exposure Service API
  *
@@ -39,7 +39,7 @@ func NewRouter() *gin.Engine {
 }
 
 func AddService(engine *gin.Engine) *gin.RouterGroup {
-	group := engine.Group("/nsmaf-callback")
+	group := engine.Group("/nsmf-callback")
 
 	for _, route := range routes {
 		switch route.Method {

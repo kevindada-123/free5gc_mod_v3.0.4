@@ -130,6 +130,7 @@ func CallAPI(cfg Configuration, request *http.Request) (*http.Response, error) {
 	} else if request.URL.Scheme == "http" {
 		return innerHTTP2CleartextClient.Do(request)
 	}
+
 	return nil, fmt.Errorf("unsupported scheme[%s]", request.URL.Scheme)
 }
 

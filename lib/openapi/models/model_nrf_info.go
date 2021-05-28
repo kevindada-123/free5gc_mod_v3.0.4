@@ -19,6 +19,4 @@ type NrfInfo struct {
 	ServedPcfInfo  map[string]PcfInfo  `json:"servedPcfInfo,omitempty" yaml:"servedPcfInfo" bson:"servedPcfInfo" mapstructure:"ServedPcfInfo"`
 	ServedBsfInfo  map[string]BsfInfo  `json:"servedBsfInfo,omitempty" yaml:"servedBsfInfo" bson:"servedBsfInfo" mapstructure:"ServedBsfInfo"`
 	ServedChfInfo  map[string]ChfInfo  `json:"servedChfInfo,omitempty" yaml:"servedChfInfo" bson:"servedChfInfo" mapstructure:"ServedChfInfo"`
-	// 20210526 add
-	ServedSmafInfo map[string]SmafInfo `json:"servedSmafInfo,omitempty" yaml:"servedSmafInfo" bson:"servedSmafInfo" mapstructure:"ServedSmafInfo"`
 }

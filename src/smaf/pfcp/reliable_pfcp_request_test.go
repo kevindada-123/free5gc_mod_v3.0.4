@@ -10,10 +10,10 @@ import (
 // var testWaitingTime int = 500
 
 func init() {
-	// smafContext := context.SMAF_Self()
+	// smfContext := context.SMF_Self()
 
-	// smafContext.CPNodeID.NodeIdType = 0
-	// smafContext.CPNodeID.NodeIdValue = net.ParseIP("127.0.0.2").To4()
+	// smfContext.CPNodeID.NodeIdType = 0
+	// smfContext.CPNodeID.NodeIdValue = net.ParseIP("127.0.0.2").To4()
 
 	// udp.Run()
 

@@ -3,24 +3,22 @@ package consumer
 import (
 	"context"
 	"free5gc/lib/openapi"
-	"free5gc/lib/openapi/Nsmaf_PDUSession"
+	"free5gc/lib/openapi/Nsmf_PDUSession"
 	"free5gc/lib/openapi/models"
 	"free5gc/src/smaf/logger"
 	"net/http"
 )
 
-//Example Consumer(s):AMF
 func SendSMContextStatusNotification(uri string) (*models.ProblemDetails, error) {
 	if uri != "" {
 		request := models.SmContextStatusNotification{}
 		request.StatusInfo = &models.StatusInfo{
 			ResourceStatus: models.ResourceStatus_RELEASED,
 		}
-		configuration := Nsmaf_PDUSession.NewConfiguration()
-		client := Nsmaf_PDUSession.NewAPIClient(configuration)
+		configuration := Nsmf_PDUSession.NewConfiguration()
+		client := Nsmf_PDUSession.NewAPIClient(configuration)
 
-		//TS23.502 5.2.8.2.8	Nsmf_PDUSession_SMContextStatusNotify service operation
-		logger.CtxLog.Infoln("[SMAF] Send SMContext Status Notification")
+		logger.CtxLog.Infoln("[SMF] Send SMContext Status Notification")
 		httpResp, localErr := client.
 			IndividualSMContextNotificationApi.
 			SMContextNotification(context.Background(), uri, request)

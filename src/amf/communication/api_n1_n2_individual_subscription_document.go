@@ -15,14 +15,13 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/amf/logger"
 	"free5gc/src/amf/producer"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // N1N2MessageUnSubscribe - Namf_Communication N1N2 Message UnSubscribe (UE Specific) service Operation
 func HTTPN1N2MessageUnSubscribe(c *gin.Context) {
-	logger.CommLog.Debugln(" func : HTTPN1N2MessageUnSubscribe")
+
 	req := http_wrapper.NewRequest(c.Request, nil)
 	req.Params["ueContextId"] = c.Params.ByName("ueContextId")
 	req.Params["subscriptionId"] = c.Params.ByName("subscriptionId")

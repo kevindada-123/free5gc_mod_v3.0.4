@@ -22,7 +22,7 @@ type Info struct {
 }
 
 type Configuration struct {
-	SmafName string `yaml:"smafName,omitempty"`
+	SmfName string `yaml:"smfName,omitempty"`
 
 	Sbi *Sbi `yaml:"sbi,omitempty"`
 
@@ -38,7 +38,7 @@ type Configuration struct {
 
 	ServiceNameList []string `yaml:"serviceNameList,omitempty"`
 
-	SNssaiInfo []models.SnssaiSmafInfoItem `yaml:"snssai_info,omitempty"`
+	SNssaiInfo []models.SnssaiSmfInfoItem `yaml:"snssai_info,omitempty"`
 
 	ULCL bool `yaml:"ulcl,omitempty"`
 }

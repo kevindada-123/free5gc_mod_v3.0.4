@@ -120,7 +120,7 @@ func (smContext *SMContext) HandlePDUSessionEstablishmentRequest(req *nasMessage
 			}
 		}
 	}
-	//為UE分配IP addr
+
 	smContext.PDUAddress = AllocUEIP()
 }
 

@@ -23,7 +23,7 @@ import (
 // ProvideLocationInfo - Namf_Location ProvideLocationInfo service Operation
 func HTTPProvideLocationInfo(c *gin.Context) {
 	var requestLocInfo models.RequestLocInfo
-	logger.LocationLog.Debugln("func : HTTPProvideLocationInfo")
+
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		problemDetail := models.ProblemDetails{

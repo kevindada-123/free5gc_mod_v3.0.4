@@ -200,13 +200,10 @@ func TestRegistration(t *testing.T) {
 	sendMsg, err = test.GetUplinkNASTransport(ue.AmfUeNgapId, ue.RanUeNgapId, pdu)
 	assert.Nil(t, err)
 	_, err = conn.Write(sendMsg)
-	fmt.Println("after send PDU session establishment message to amf")
 	assert.Nil(t, err)
 
 	// receive 12. NGAP-PDU Session Resource Setup Request(DL nas transport((NAS msg-PDU session setup Accept)))
-	fmt.Println("before recieve N2 PDU session request")
 	n, err = conn.Read(recvMsg)
-	fmt.Println("after recieve N2 PDU session request")
 	assert.Nil(t, err)
 	ngapPdu, err = ngap.Decoder(recvMsg[:n])
 	assert.Nil(t, err)

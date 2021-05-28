@@ -296,7 +296,6 @@ func (a *NFInstanceIDDocumentApiService) RegisterNFInstance(ctx context.Context,
 
 	r, err := openapi.PrepareRequest(ctx, a.client.cfg, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
-		//fmt.Println("PrepareRequest", err)
 		return localVarReturnValue, nil, err
 	}
 
@@ -308,7 +307,6 @@ func (a *NFInstanceIDDocumentApiService) RegisterNFInstance(ctx context.Context,
 	localVarBody, err := ioutil.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	if err != nil {
-		//fmt.Println("ReadAll", err)
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
 

@@ -23,7 +23,7 @@ import (
 // CreateSubscription - Namf_EventExposure Subscribe service Operation
 func HTTPCreateSubscription(c *gin.Context) {
 	var createEventSubscription models.AmfCreateEventSubscription
-	logger.EeLog.Debugln("func : HTTPCreateSubscription")
+
 	requestBody, err := c.GetRawData()
 	if err != nil {
 		logger.EeLog.Errorf("Get Request Body error: %+v", err)

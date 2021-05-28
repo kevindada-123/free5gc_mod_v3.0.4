@@ -17,7 +17,7 @@ var Server pfcpUdp.PfcpServer
 var ServerStartTime time.Time
 
 func Run(Dispatch func(*pfcpUdp.Message)) {
-	CPNodeID := context.SMAF_Self().CPNodeID
+	CPNodeID := context.SMF_Self().CPNodeID
 	Server = pfcpUdp.NewPfcpServer(CPNodeID.ResolveNodeIdToIp().String())
 
 	err := Server.Listen()
@@ -53,6 +53,7 @@ func SendPfcp(msg pfcp.Message, addr *net.UDPAddr) {
 
 	err := Server.WriteTo(msg, addr)
 	if err != nil {
+		logger.PfcpLog.Infoln("in smaf pfcp udp sendpfcp")
 		logger.PfcpLog.Errorf("Failed to send PFCP message: %v", err)
 	}
 

@@ -126,7 +126,7 @@ func SendDeregisterNFInstance() (problemDetails *models.ProblemDetails, err erro
 		problem := err.(openapi.GenericOpenAPIError).Model().(models.ProblemDetails)
 		problemDetails = &problem
 	} else {
-		err = openapi.ReportError("")
+		err = openapi.ReportError("server no response")
 	}
 	return
 }
