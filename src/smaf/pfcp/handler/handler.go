@@ -199,7 +199,7 @@ func HandlePfcpSessionEstablishmentResponse(msg *pfcpUdp.Message) {
 
 	}
 
-	if smf_context.SMF_Self().ULCLSupport && smContext.BPManager != nil {
+	if smf_context.SMAF_Self().ULCLSupport && smContext.BPManager != nil {
 		if smContext.BPManager.BPStatus == smf_context.AddingPSA {
 			logger.PfcpLog.Infoln("Keep Adding PSAndULCL")
 			producer.AddPDUSessionAnchorAndULCL(smContext, *rsp.NodeID)
@@ -216,7 +216,7 @@ func HandlePfcpSessionModificationResponse(msg *pfcpUdp.Message) {
 
 	logger.PfcpLog.Infoln("In HandlePfcpSessionModificationResponse")
 
-	if smf_context.SMF_Self().ULCLSupport && smContext.BPManager != nil {
+	if smf_context.SMAF_Self().ULCLSupport && smContext.BPManager != nil {
 		if smContext.BPManager.BPStatus == smf_context.AddingPSA {
 			logger.PfcpLog.Infoln("Keep Adding PSAAndULCL")
 
@@ -238,7 +238,7 @@ func HandlePfcpSessionModificationResponse(msg *pfcpUdp.Message) {
 				smContext.SBIPFCPCommunicationChan <- smf_context.SessionUpdateSuccess
 			}
 
-			if smf_context.SMF_Self().ULCLSupport && smContext.BPManager != nil {
+			if smf_context.SMAF_Self().ULCLSupport && smContext.BPManager != nil {
 				if smContext.BPManager.BPStatus == smf_context.UnInitialized {
 					logger.PfcpLog.Infoln("Add PSAAndULCL")
 					upfNodeID := smContext.GetNodeIDByLocalSEID(SEID)
@@ -344,9 +344,9 @@ func HandlePfcpSessionReportRequest(msg *pfcpUdp.Message) {
 				PduSessionId: smContext.PDUSessionID,
 				// Temporarily assign SMF itself, TODO: TS 23.502 4.2.3.3 5. Namf_Communication_N1N2TransferFailureNotification
 				N1n2FailureTxfNotifURI: fmt.Sprintf("%s://%s:%d",
-					smf_context.SMF_Self().URIScheme,
-					smf_context.SMF_Self().RegisterIPv4,
-					smf_context.SMF_Self().SBIPort),
+					smf_context.SMAF_Self().URIScheme,
+					smf_context.SMAF_Self().RegisterIPv4,
+					smf_context.SMAF_Self().SBIPort),
 				N2InfoContainer: &models.N2InfoContainer{
 					N2InformationClass: models.N2InformationClass_SM,
 					SmInfo: &models.N2SmInformation{

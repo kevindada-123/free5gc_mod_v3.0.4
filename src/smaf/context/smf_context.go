@@ -159,11 +159,11 @@ func InitSmfContext(config *factory.Config) {
 
 	// Set client and set url
 	ManagementConfig := Nnrf_NFManagement.NewConfiguration()
-	ManagementConfig.SetBasePath(SMF_Self().NrfUri)
+	ManagementConfig.SetBasePath(SMAF_Self().NrfUri)
 	smfContext.NFManagementClient = Nnrf_NFManagement.NewAPIClient(ManagementConfig)
 
 	NFDiscovryConfig := Nnrf_NFDiscovery.NewConfiguration()
-	NFDiscovryConfig.SetBasePath(SMF_Self().NrfUri)
+	NFDiscovryConfig.SetBasePath(SMAF_Self().NrfUri)
 	smfContext.NFDiscoveryClient = Nnrf_NFDiscovery.NewAPIClient(NFDiscovryConfig)
 
 	smfContext.ULCLSupport = configuration.ULCL
@@ -207,7 +207,7 @@ func InitSMFUERouting(routingConfig *factory.RoutingConfig) {
 
 }
 
-func SMF_Self() *SMFContext {
+func SMAF_Self() *SMFContext {
 	return &smfContext
 }
 

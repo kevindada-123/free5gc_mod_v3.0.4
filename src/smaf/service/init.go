@@ -29,12 +29,12 @@ import (
 	"free5gc/src/smaf/util"
 )
 
-type SMF struct{}
+type SMAF struct{}
 
 type (
 	// Config information.
 	Config struct {
-		smfcfg    string
+		smafcfg   string
 		uerouting string
 	}
 )
@@ -47,7 +47,7 @@ var smfCLi = []cli.Flag{
 		Usage: "common config file",
 	},
 	cli.StringFlag{
-		Name:  "smfcfg",
+		Name:  "smafcfg",
 		Usage: "config file",
 	},
 	cli.StringFlag{
@@ -62,19 +62,19 @@ func init() {
 	initLog = logger.InitLog
 }
 
-func (*SMF) GetCliCmd() (flags []cli.Flag) {
+func (*SMAF) GetCliCmd() (flags []cli.Flag) {
 	return smfCLi
 }
 
-func (*SMF) Initialize(c *cli.Context) {
+func (*SMAF) Initialize(c *cli.Context) {
 
 	config = Config{
-		smfcfg:    c.String("smafcfg"),
+		smafcfg:   c.String("smafcfg"),
 		uerouting: c.String("uerouting"),
 	}
 
-	if config.smfcfg != "" {
-		factory.InitConfigFactory(config.smfcfg)
+	if config.smafcfg != "" {
+		factory.InitConfigFactory(config.smafcfg)
 	} else {
 		DefaultSmfConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
 		factory.InitConfigFactory(DefaultSmfConfigPath)
@@ -103,8 +103,8 @@ func (*SMF) Initialize(c *cli.Context) {
 	logger.SetReportCaller(app.ContextSelf().Logger.SMF.ReportCaller)
 }
 
-func (smf *SMF) FilterCli(c *cli.Context) (args []string) {
-	for _, flag := range smf.GetCliCmd() {
+func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
+	for _, flag := range smaf.GetCliCmd() {
 		name := flag.GetName()
 		value := fmt.Sprint(c.Generic(name))
 		if value == "" {
@@ -116,7 +116,7 @@ func (smf *SMF) FilterCli(c *cli.Context) (args []string) {
 	return args
 }
 
-func (smf *SMF) Start() {
+func (smaf *SMAF) Start() {
 	context.InitSmfContext(&factory.SmfConfig)
 	//allocate id for each upf
 	context.AllocateUPFID()
@@ -139,7 +139,7 @@ func (smf *SMF) Start() {
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-signalChannel
-		smf.Terminate()
+		smaf.Terminate()
 		os.Exit(0)
 	}()
 
@@ -155,14 +155,14 @@ func (smf *SMF) Start() {
 	}
 	udp.Run(pfcp.Dispatch)
 
-	for _, upf := range context.SMF_Self().UserPlaneInformation.UPFs {
+	for _, upf := range context.SMAF_Self().UserPlaneInformation.UPFs {
 		logger.AppLog.Infof("Send PFCP Association Request to UPF[%s]\n", upf.NodeID.NodeIdValue)
 		message.SendPfcpAssociationSetupRequest(upf.NodeID)
 	}
 
 	time.Sleep(1000 * time.Millisecond)
 
-	HTTPAddr := fmt.Sprintf("%s:%d", context.SMF_Self().BindingIPv4, context.SMF_Self().SBIPort)
+	HTTPAddr := fmt.Sprintf("%s:%d", context.SMAF_Self().BindingIPv4, context.SMAF_Self().SBIPort)
 	server, err := http2_util.NewServer(HTTPAddr, util.SmfLogPath, router)
 
 	if server == nil {
@@ -187,8 +187,8 @@ func (smf *SMF) Start() {
 
 }
 
-func (smf *SMF) Terminate() {
-	logger.InitLog.Infof("Terminating SMF...")
+func (smaf *SMAF) Terminate() {
+	logger.InitLog.Infof("Terminating SMAF...")
 	// deregister with NRF
 	problemDetails, err := consumer.SendDeregisterNFInstance()
 	if problemDetails != nil {
@@ -200,6 +200,6 @@ func (smf *SMF) Terminate() {
 	}
 }
 
-func (smf *SMF) Exec(c *cli.Context) error {
+func (smaf *SMAF) Exec(c *cli.Context) error {
 	return nil
 }

@@ -226,7 +226,7 @@ func (smContext *SMContext) PCFSelection() error {
 	// Send NFDiscovery for find PCF
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
-	rep, res, err := SMF_Self().
+	rep, res, err := SMAF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
 		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMF, &localVarOptionals)

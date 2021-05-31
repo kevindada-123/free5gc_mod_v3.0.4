@@ -12,7 +12,7 @@ import (
 func BuildPfcpAssociationSetupRequest() (pfcp.PFCPAssociationSetupRequest, error) {
 	msg := pfcp.PFCPAssociationSetupRequest{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
 	msg.RecoveryTimeStamp = &pfcpType.RecoveryTimeStamp{
 		RecoveryTimeStamp: udp.ServerStartTime,
@@ -28,7 +28,7 @@ func BuildPfcpAssociationSetupRequest() (pfcp.PFCPAssociationSetupRequest, error
 func BuildPfcpAssociationSetupResponse(cause pfcpType.Cause) (pfcp.PFCPAssociationSetupResponse, error) {
 	msg := pfcp.PFCPAssociationSetupResponse{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
 	msg.Cause = &cause
 
@@ -46,7 +46,7 @@ func BuildPfcpAssociationSetupResponse(cause pfcpType.Cause) (pfcp.PFCPAssociati
 func BuildPfcpAssociationReleaseRequest() (pfcp.PFCPAssociationReleaseRequest, error) {
 	msg := pfcp.PFCPAssociationReleaseRequest{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
 	return msg, nil
 }
@@ -54,7 +54,7 @@ func BuildPfcpAssociationReleaseRequest() (pfcp.PFCPAssociationReleaseRequest, e
 func BuildPfcpAssociationReleaseResponse(cause pfcpType.Cause) (pfcp.PFCPAssociationReleaseResponse, error) {
 	msg := pfcp.PFCPAssociationReleaseResponse{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
 	msg.Cause = &cause
 
@@ -212,9 +212,9 @@ func BuildPfcpSessionEstablishmentRequest(
 	pdrList []*context.PDR, farList []*context.FAR, barList []*context.BAR) (pfcp.PFCPSessionEstablishmentRequest, error) {
 	msg := pfcp.PFCPSessionEstablishmentRequest{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
-	isv4 := context.SMF_Self().CPNodeID.NodeIdType == 0
+	isv4 := context.SMAF_Self().CPNodeID.NodeIdType == 0
 	nodeIDtoIP := upNodeID.ResolveNodeIdToIp().String()
 
 	localSEID := smContext.PFCPContext[nodeIDtoIP].LocalSEID
@@ -223,7 +223,7 @@ func BuildPfcpSessionEstablishmentRequest(
 		V4:          isv4,
 		V6:          !isv4,
 		Seid:        localSEID,
-		Ipv4Address: context.SMF_Self().CPNodeID.NodeIdValue,
+		Ipv4Address: context.SMAF_Self().CPNodeID.NodeIdValue,
 	}
 
 	msg.CreatePDR = make([]*pfcp.CreatePDR, 0)
@@ -261,7 +261,7 @@ func BuildPfcpSessionEstablishmentRequest(
 func BuildPfcpSessionEstablishmentResponse() (pfcp.PFCPSessionEstablishmentResponse, error) {
 	msg := pfcp.PFCPSessionEstablishmentResponse{}
 
-	msg.NodeID = &context.SMF_Self().CPNodeID
+	msg.NodeID = &context.SMAF_Self().CPNodeID
 
 	msg.Cause = &pfcpType.Cause{
 		CauseValue: pfcpType.CauseRequestAccepted,
@@ -313,7 +313,7 @@ func BuildPfcpSessionModificationRequest(
 		V4:          true,
 		V6:          false,
 		Seid:        localSEID,
-		Ipv4Address: context.SMF_Self().CPNodeID.NodeIdValue,
+		Ipv4Address: context.SMAF_Self().CPNodeID.NodeIdValue,
 	}
 
 	for _, pdr := range pdrList {

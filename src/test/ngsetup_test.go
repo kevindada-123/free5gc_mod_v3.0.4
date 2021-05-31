@@ -35,7 +35,7 @@ var NFs = []app.NetworkFunction{
 	&amf_service.AMF{},
 	//&smf_service.SMF{},
 	//20210528
-	&smaf_service.SMF{},
+	&smaf_service.SMAF{},
 	&udr_service.UDR{},
 	&pcf_service.PCF{},
 	&udm_service.UDM{},

@@ -32,8 +32,8 @@ func BuildGSMPDUSessionEstablishmentAccept(smContext *SMContext) ([]byte, error)
 	selectedPDUSessionType := nasConvert.PDUSessionTypeToModels(smContext.SelectedPDUSessionType)
 	if selectedPDUSessionType == models.PduSessionType_IPV4_V6 {
 
-		onlySupportIPv4 := SMF_Self().OnlySupportIPv4
-		onlySupportIPv6 := SMF_Self().OnlySupportIPv6
+		onlySupportIPv4 := SMAF_Self().OnlySupportIPv4
+		onlySupportIPv6 := SMAF_Self().OnlySupportIPv6
 
 		if onlySupportIPv4 {
 			smContext.SelectedPDUSessionType = nasMessage.PDUSessionTypeIPv4
@@ -114,7 +114,7 @@ func BuildGSMPDUSessionEstablishmentAccept(smContext *SMContext) ([]byte, error)
 	pDUSessionEstablishmentAccept.DNN.SetDNN(dnn)
 
 	if smContext.ProtocolConfigurationOptions.DNSIPv4Request || smContext.ProtocolConfigurationOptions.DNSIPv6Request {
-		dnnInfo, exist := SMF_Self().DNNInfo[smContext.Dnn]
+		dnnInfo, exist := SMAF_Self().DNNInfo[smContext.Dnn]
 		if !exist {
 			logger.GsmLog.Warnf("No default DNS IP for DNN [%s]\n", smContext.Dnn)
 		}

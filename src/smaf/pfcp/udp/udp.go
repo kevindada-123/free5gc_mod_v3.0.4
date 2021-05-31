@@ -17,7 +17,7 @@ var Server pfcpUdp.PfcpServer
 var ServerStartTime time.Time
 
 func Run(Dispatch func(*pfcpUdp.Message)) {
-	CPNodeID := context.SMF_Self().CPNodeID
+	CPNodeID := context.SMAF_Self().CPNodeID
 	Server = pfcpUdp.NewPfcpServer(CPNodeID.ResolveNodeIdToIp().String())
 
 	err := Server.Listen()

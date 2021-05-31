@@ -70,7 +70,7 @@ func HandlePDUSessionSMContextCreate(request models.PostSmContextsRequest) *http
 		SingleNssai: optional.NewInterface(openapi.MarshToJsonString(smContext.Snssai)),
 	}
 
-	SubscriberDataManagementClient := smf_context.SMF_Self().SubscriberDataManagementClient
+	SubscriberDataManagementClient := smf_context.SMAF_Self().SubscriberDataManagementClient
 
 	if sessSubData, _, err := SubscriberDataManagementClient.
 		SessionManagementSubscriptionDataRetrievalApi.
@@ -98,9 +98,9 @@ func HandlePDUSessionSMContextCreate(request models.PostSmContextsRequest) *http
 	smPolicyData.Supi = smContext.Supi
 	smPolicyData.PduSessionId = smContext.PDUSessionID
 	smPolicyData.NotificationUri = fmt.Sprintf("%s://%s:%d/nsmf-callback/sm-policies/%s",
-		smf_context.SMF_Self().URIScheme,
-		smf_context.SMF_Self().RegisterIPv4,
-		smf_context.SMF_Self().SBIPort,
+		smf_context.SMAF_Self().URIScheme,
+		smf_context.SMAF_Self().RegisterIPv4,
+		smf_context.SMAF_Self().SBIPort,
 		smContext.Ref,
 	)
 	smPolicyData.Dnn = smContext.Dnn
@@ -134,7 +134,7 @@ func HandlePDUSessionSMContextCreate(request models.PostSmContextsRequest) *http
 	smContext.Tunnel = smf_context.NewUPTunnel()
 	var defaultPath *smf_context.DataPath
 
-	if smf_context.SMF_Self().ULCLSupport && smf_context.CheckUEHasPreConfig(createData.Supi) {
+	if smf_context.SMAF_Self().ULCLSupport && smf_context.CheckUEHasPreConfig(createData.Supi) {
 		logger.PduSessLog.Infof("SUPI[%s] has pre-config route", createData.Supi)
 		uePreConfigPaths := smf_context.GetUEPreConfigPaths(createData.Supi)
 		smContext.Tunnel.DataPathPool = uePreConfigPaths.DataPathPool

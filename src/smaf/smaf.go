@@ -21,7 +21,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-var SMAF = &service.SMF{}
+var SMAF = &service.SMAF{}
 
 var appLog *logrus.Entry
 
