@@ -41,6 +41,6 @@ func SetupNFProfile(config *factory.Config) {
 
 	//set smfInfo
 	SmfInfo = &models.SmfInfo{
-		SNssaiSmfInfoList: &smfContext.SnssaiInfos,
+		SNssaiSmfInfoList: &smafContext.SnssaiInfos,
 	}
 }

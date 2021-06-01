@@ -41,10 +41,10 @@ type UPNode struct {
 type UPPath []*UPNode
 
 func AllocateUPFID() {
-	UPFsID := smfContext.UserPlaneInformation.UPFsID
-	UPFsIPtoID := smfContext.UserPlaneInformation.UPFsIPtoID
+	UPFsID := smafContext.UserPlaneInformation.UPFsID
+	UPFsIPtoID := smafContext.UserPlaneInformation.UPFsIPtoID
 
-	for upfName, upfNode := range smfContext.UserPlaneInformation.UPFs {
+	for upfName, upfNode := range smafContext.UserPlaneInformation.UPFs {
 		upfid := upfNode.UPF.UUID()
 		upfip := upfNode.NodeID.ResolveNodeIdToIp().String()
 

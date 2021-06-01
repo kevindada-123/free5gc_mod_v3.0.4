@@ -71,12 +71,8 @@ const (
 
 var ausfContext AUSFContext
 
-func Init() {
-	InitAusfContext(&ausfContext)
-}
-
-//20210601 add
-func InitAusfContext(context *AUSFContext) {
+//20210601 edited
+func InitAusfContext() {
 	snRegex, err := regexp.Compile("5G:mnc[0-9]{3}[.]mcc[0-9]{3}[.]3gppnetwork[.]org")
 	if err != nil {
 		logger.ContextLog.Warnf("SN compile error: %+v", err)
@@ -110,11 +106,11 @@ func InitAusfContext(context *AUSFContext) {
 		}
 
 		ausfContext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
-		if context.BindingIPv4 != "" {
+		if ausfContext.BindingIPv4 != "" {
 			logger.InitLog.Info("Parsing ServerIPv4 address from ENV Variable.")
 		} else {
 			ausfContext.BindingIPv4 = sbi.BindingIPv4
-			if context.BindingIPv4 == "" {
+			if ausfContext.BindingIPv4 == "" {
 				logger.InitLog.Warn("Error parsing ServerIPv4 address as string. Using the 0.0.0.0 address as default.")
 				ausfContext.BindingIPv4 = "0.0.0.0"
 			}

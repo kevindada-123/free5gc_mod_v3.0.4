@@ -103,7 +103,7 @@ func (ausf *AUSF) Start() {
 	//start ausf service and network services
 	ueauthentication.AddService(router)
 	//20210601 initial ausf
-	ausf_context.Init()
+	ausf_context.InitAusfContext()
 	//20210601 call ausfcontext
 	self := ausf_context.AUSF_Self()
 	// Register to NRF
@@ -140,6 +140,7 @@ func (ausf *AUSF) Start() {
 	}
 }
 
+//20210601 這個fuction從來沒被call過
 func (ausf *AUSF) Exec(c *cli.Context) error {
 	initLog.Infoln("AUSF Server exec")
 	initLog.Traceln("args:", c.String("ausfcfg"))
