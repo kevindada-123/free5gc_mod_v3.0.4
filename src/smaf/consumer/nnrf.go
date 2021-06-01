@@ -40,7 +40,7 @@ func SendNFRegistration() error {
 			NFInstanceIDDocumentApi.
 			RegisterNFInstance(context.TODO(), smf_context.SMAF_Self().NfInstanceID, profile)
 		if err != nil || res == nil {
-			logger.AppLog.Infof("SMF register to NRF Error[%s]", err.Error())
+			logger.AppLog.Infof("SMAF register to NRF Error[%s]", err.Error())
 			time.Sleep(2 * time.Second)
 			continue
 		}

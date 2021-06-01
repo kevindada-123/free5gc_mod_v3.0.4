@@ -75,7 +75,7 @@ func AllocateLocalSEID() uint64 {
 	return smfContext.LocalSEIDCount
 }
 
-func InitSmfContext(config *factory.Config) {
+func InitSmafContext(config *factory.Config) {
 	if config == nil {
 		logger.CtxLog.Error("Config is nil")
 		return

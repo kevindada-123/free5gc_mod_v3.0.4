@@ -13,7 +13,7 @@ import (
 	"free5gc/src/smaf/logger"
 )
 
-var SmfConfig Config
+var SmafConfig Config
 var UERoutingConfig RoutingConfig
 
 func checkErr(err error) {
@@ -28,9 +28,9 @@ func InitConfigFactory(f string) {
 	content, err := ioutil.ReadFile(f)
 	checkErr(err)
 
-	SmfConfig = Config{}
+	SmafConfig = Config{}
 
-	err = yaml.Unmarshal([]byte(content), &SmfConfig)
+	err = yaml.Unmarshal([]byte(content), &SmafConfig)
 	checkErr(err)
 
 	logger.InitLog.Infof("Successfully initialize configuration %s", f)

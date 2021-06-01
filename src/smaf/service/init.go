@@ -76,8 +76,8 @@ func (*SMAF) Initialize(c *cli.Context) {
 	if config.smafcfg != "" {
 		factory.InitConfigFactory(config.smafcfg)
 	} else {
-		DefaultSmfConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
-		factory.InitConfigFactory(DefaultSmfConfigPath)
+		DefaultSmafConfigPath := path_util.Gofree5gcPath("free5gc/config/smafcfg.conf")
+		factory.InitConfigFactory(DefaultSmafConfigPath)
 	}
 
 	if config.uerouting != "" {
@@ -117,16 +117,16 @@ func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (smaf *SMAF) Start() {
-	context.InitSmfContext(&factory.SmfConfig)
+	context.InitSmafContext(&factory.SmafConfig)
 	//allocate id for each upf
 	context.AllocateUPFID()
 	context.InitSMFUERouting(&factory.UERoutingConfig)
 
 	initLog.Infoln("Server started")
+	//20210601 initial loggger
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
-
+	//20210601 send registration msg to NRF
 	err := consumer.SendNFRegistration()
-
 	if err != nil {
 		retry_err := consumer.RetrySendNFRegistration(10)
 		if retry_err != nil {
@@ -142,10 +142,10 @@ func (smaf *SMAF) Start() {
 		smaf.Terminate()
 		os.Exit(0)
 	}()
-
+	//start smaf service and network services
 	oam.AddService(router)
 	callback.AddService(router)
-	for _, serviceName := range factory.SmfConfig.Configuration.ServiceNameList {
+	for _, serviceName := range factory.SmafConfig.Configuration.ServiceNameList {
 		switch models.ServiceName(serviceName) {
 		case models.ServiceName_NSMF_PDUSESSION:
 			pdusession.AddService(router)
@@ -153,6 +153,7 @@ func (smaf *SMAF) Start() {
 			eventexposure.AddService(router)
 		}
 	}
+	//20210601 run pfcp connection
 	udp.Run(pfcp.Dispatch)
 
 	for _, upf := range context.SMAF_Self().UserPlaneInformation.UPFs {
@@ -161,9 +162,9 @@ func (smaf *SMAF) Start() {
 	}
 
 	time.Sleep(1000 * time.Millisecond)
-
+	//20210601 initialize http server
 	HTTPAddr := fmt.Sprintf("%s:%d", context.SMAF_Self().BindingIPv4, context.SMAF_Self().SBIPort)
-	server, err := http2_util.NewServer(HTTPAddr, util.SmfLogPath, router)
+	server, err := http2_util.NewServer(HTTPAddr, util.SmafLogPath, router)
 
 	if server == nil {
 		initLog.Error("Initialize HTTP server failed:", err)
@@ -173,12 +174,12 @@ func (smaf *SMAF) Start() {
 	if err != nil {
 		initLog.Warnln("Initialize HTTP server:", err)
 	}
-
-	serverScheme := factory.SmfConfig.Configuration.Sbi.Scheme
+	//20210601 determine http or https
+	serverScheme := factory.SmafConfig.Configuration.Sbi.Scheme
 	if serverScheme == "http" {
 		err = server.ListenAndServe()
 	} else if serverScheme == "https" {
-		err = server.ListenAndServeTLS(util.SmfPemPath, util.SmfKeyPath)
+		err = server.ListenAndServeTLS(util.SmafPemPath, util.SmafKeyPath)
 	}
 
 	if err != nil {

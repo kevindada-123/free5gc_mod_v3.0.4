@@ -98,12 +98,14 @@ func (ausf *AUSF) FilterCli(c *cli.Context) (args []string) {
 
 func (ausf *AUSF) Start() {
 	initLog.Infoln("Server started")
-
+	//20210601 initial loggger
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
+	//start ausf service and network services
 	ueauthentication.AddService(router)
-
+	//20210601 initial ausf
 	ausf_context.Init()
-	self := ausf_context.GetSelf()
+	//20210601 call ausfcontext
+	self := ausf_context.AUSF_Self()
 	// Register to NRF
 	profile, err := consumer.BuildNFInstance(self)
 	if err != nil {
@@ -114,11 +116,9 @@ func (ausf *AUSF) Start() {
 		initLog.Errorf("AUSF register to NRF Error[%s]", err.Error())
 	}
 
-	ausfLogPath := util.AusfLogPath
-
+	//20210601 initialize http server
 	addr := fmt.Sprintf("%s:%d", self.BindingIPv4, self.SBIPort)
-
-	server, err := http2_util.NewServer(addr, ausfLogPath, router)
+	server, err := http2_util.NewServer(addr, util.AusfLogPath, router)
 	if server == nil {
 		initLog.Errorf("Initialize HTTP server failed: %+v", err)
 		return
@@ -127,7 +127,7 @@ func (ausf *AUSF) Start() {
 	if err != nil {
 		initLog.Warnf("Initialize HTTP server: +%v", err)
 	}
-
+	//20210601 determine http or https
 	serverScheme := factory.AusfConfig.Configuration.Sbi.Scheme
 	if serverScheme == "http" {
 		err = server.ListenAndServe()
@@ -141,7 +141,7 @@ func (ausf *AUSF) Start() {
 }
 
 func (ausf *AUSF) Exec(c *cli.Context) error {
-
+	initLog.Infoln("AUSF Server exec")
 	initLog.Traceln("args:", c.String("ausfcfg"))
 	args := ausf.FilterCli(c)
 	initLog.Traceln("filter: ", args)
