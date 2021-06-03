@@ -3,7 +3,7 @@ package producer
 import (
 	"free5gc/lib/http_wrapper"
 	"free5gc/lib/openapi/models"
-	smf_context "free5gc/src/smaf/context"
+	smaf_context "free5gc/src/smaf/context"
 	"free5gc/src/smaf/logger"
 	"net/http"
 )
@@ -11,14 +11,14 @@ import (
 func HandleSMPolicyUpdateNotify(smContextRef string, request models.SmPolicyNotification) *http_wrapper.Response {
 	logger.PduSessLog.Infoln("In HandleSMPolicyUpdateNotify")
 	decision := request.SmPolicyDecision
-	smContext := smf_context.GetSMContext(smContextRef)
+	smContext := smaf_context.GetSMContext(smContextRef)
 	if smContext == nil {
 		logger.PduSessLog.Errorf("SMContext[%s] not found", smContextRef)
 		httpResponse := http_wrapper.NewResponse(http.StatusBadRequest, nil, nil)
 		return httpResponse
 	}
 
-	if smContext.SMContextState != smf_context.Active {
+	if smContext.SMContextState != smaf_context.Active {
 		//Wait till the state becomes Active again
 		//TODO: implement waiting in concurrent architecture
 		logger.PduSessLog.Infoln("The SMContext State should be Active State")
@@ -38,12 +38,12 @@ func HandleSMPolicyUpdateNotify(smContextRef string, request models.SmPolicyNoti
 	return httpResponse
 }
 
-func handleSessionRule(smContext *smf_context.SMContext, id string, sessionRuleModel *models.SessionRule) {
+func handleSessionRule(smContext *smaf_context.SMContext, id string, sessionRuleModel *models.SessionRule) {
 	if sessionRuleModel == nil {
 		logger.PduSessLog.Debugf("Delete SessionRule[%s]", id)
 		delete(smContext.SessionRules, id)
 	} else {
-		sessRule := smf_context.NewSessionRuleFromModel(sessionRuleModel)
+		sessRule := smaf_context.NewSessionRuleFromModel(sessionRuleModel)
 		// Session rule installation
 		if oldSessRule, exist := smContext.SessionRules[id]; !exist {
 			logger.PduSessLog.Debugf("Install SessionRule[%s]", id)
@@ -55,9 +55,9 @@ func handleSessionRule(smContext *smf_context.SMContext, id string, sessionRuleM
 	}
 }
 
-func ApplySmPolicyFromDecision(smContext *smf_context.SMContext, decision *models.SmPolicyDecision) error {
+func ApplySmPolicyFromDecision(smContext *smaf_context.SMContext, decision *models.SmPolicyDecision) error {
 	logger.PduSessLog.Traceln("In ApplySmPolicyFromDecision")
-	smContext.SMContextState = smf_context.ModificationPending
+	smContext.SMContextState = smaf_context.ModificationPending
 	selectedSessionRule := smContext.SelectedSessionRule()
 	if selectedSessionRule == nil { //No active session rule
 		//Update session rules from decision
@@ -66,7 +66,7 @@ func ApplySmPolicyFromDecision(smContext *smf_context.SMContext, decision *model
 		}
 		for id := range smContext.SessionRules {
 			// Randomly choose a session rule to activate
-			smf_context.SetSessionRuleActivateState(smContext.SessionRules[id], true)
+			smaf_context.SetSessionRuleActivateState(smContext.SessionRules[id], true)
 			break
 		}
 	} else {
@@ -79,12 +79,12 @@ func ApplySmPolicyFromDecision(smContext *smf_context.SMContext, decision *model
 			//Original active session rule is deleted; choose again
 			for id := range smContext.SessionRules {
 				// Randomly choose a session rule to activate
-				smf_context.SetSessionRuleActivateState(smContext.SessionRules[id], true)
+				smaf_context.SetSessionRuleActivateState(smContext.SessionRules[id], true)
 				break
 			}
 		} else {
 			//Activate original active session rule
-			smf_context.SetSessionRuleActivateState(smContext.SessionRules[selectedSessionRuleID], true)
+			smaf_context.SetSessionRuleActivateState(smContext.SessionRules[selectedSessionRuleID], true)
 		}
 	}
 	logger.PduSessLog.Traceln("End of ApplySmPolicyFromDecision")

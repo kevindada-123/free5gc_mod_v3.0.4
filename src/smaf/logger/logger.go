@@ -17,8 +17,15 @@ var InitLog *logrus.Entry
 var GsmLog *logrus.Entry
 var PfcpLog *logrus.Entry
 var PduSessLog *logrus.Entry
-var CtxLog *logrus.Entry
+var SMAFContextLog *logrus.Entry
 var GinLog *logrus.Entry
+
+//20210602 add ausf log entry
+var UeAuthPostLog *logrus.Entry
+var Auth5gAkaComfirmLog *logrus.Entry
+var EapAuthComfirmLog *logrus.Entry
+var AusfHandlerLog *logrus.Entry
+var AusfContextLog *logrus.Entry
 
 func init() {
 	log = logrus.New()
@@ -47,8 +54,13 @@ func init() {
 	PfcpLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "Pfcp"})
 	PduSessLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PduSess"})
 	GsmLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "GSM"})
-	CtxLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "Context"})
+	SMAFContextLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "Context"})
 	GinLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "GIN"})
+	//20210602 add ausf log format
+	UeAuthPostLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "UeAuthPost"})
+	Auth5gAkaComfirmLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "5gAkaAuth"})
+	EapAuthComfirmLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "EapAkaAuth"})
+	AusfHandlerLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "AusfHandler"})
 }
 
 func SetLogLevel(level logrus.Level) {

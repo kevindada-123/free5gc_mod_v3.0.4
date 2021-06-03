@@ -20,7 +20,7 @@ func (smContext *SMContext) HandlePDUSessionEstablishmentRequest(req *nasMessage
 		if smContext.isAllowedPDUSessionType(requestedPDUSessionType) {
 			smContext.SelectedPDUSessionType = requestedPDUSessionType
 		} else {
-			logger.CtxLog.Errorf("requested pdu session type [%s] is not in allowed type\n",
+			logger.SMAFContextLog.Errorf("requested pdu session type [%s] is not in allowed type\n",
 				nasConvert.PDUSessionTypeToModels(requestedPDUSessionType))
 		}
 	} else {

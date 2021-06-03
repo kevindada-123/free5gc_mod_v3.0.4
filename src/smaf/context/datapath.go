@@ -104,7 +104,7 @@ func (node *DataPathNode) Prev() *DataPathNode {
 
 func (node *DataPathNode) ActivateUpLinkTunnel(smContext *SMContext) error {
 	var err error
-	logger.CtxLog.Traceln("In ActivateUpLinkTunnel")
+	logger.SMAFContextLog.Traceln("In ActivateUpLinkTunnel")
 	node.UpLinkTunnel.SrcEndPoint = node.Prev()
 	node.UpLinkTunnel.DestEndPoint = node
 
@@ -112,14 +112,14 @@ func (node *DataPathNode) ActivateUpLinkTunnel(smContext *SMContext) error {
 	node.UpLinkTunnel.PDR, err = destUPF.AddPDR()
 
 	if err != nil {
-		logger.CtxLog.Warnln("In ActivateUpLinkTunnel UPF IP: ", node.UPF.NodeID.ResolveNodeIdToIp().String())
-		logger.CtxLog.Warnln("Allocata PDR Error: ", err)
+		logger.SMAFContextLog.Warnln("In ActivateUpLinkTunnel UPF IP: ", node.UPF.NodeID.ResolveNodeIdToIp().String())
+		logger.SMAFContextLog.Warnln("Allocata PDR Error: ", err)
 	}
 
 	smContext.PutPDRtoPFCPSession(destUPF.NodeID, node.UpLinkTunnel.PDR)
 
 	if teid, err := destUPF.GenerateTEID(); err != nil {
-		logger.CtxLog.Errorf("Generate uplink TEID fail: %s", err)
+		logger.SMAFContextLog.Errorf("Generate uplink TEID fail: %s", err)
 		return err
 	} else {
 		node.UpLinkTunnel.TEID = teid
@@ -135,8 +135,8 @@ func (node *DataPathNode) ActivateDownLinkTunnel(smContext *SMContext) error {
 
 	destUPF := node.UPF
 	if newPDR, err := destUPF.AddPDR(); err != nil {
-		logger.CtxLog.Warnln("In ActivateDownLinkTunnel UPF IP: ", node.UPF.NodeID.ResolveNodeIdToIp().String())
-		logger.CtxLog.Warnln("Allocata PDR Error: ", err)
+		logger.SMAFContextLog.Warnln("In ActivateDownLinkTunnel UPF IP: ", node.UPF.NodeID.ResolveNodeIdToIp().String())
+		logger.SMAFContextLog.Warnln("Allocata PDR Error: ", err)
 		return fmt.Errorf("AddPDR failed: %s", err)
 	} else {
 		node.DownLinkTunnel.PDR = newPDR
@@ -145,7 +145,7 @@ func (node *DataPathNode) ActivateDownLinkTunnel(smContext *SMContext) error {
 	smContext.PutPDRtoPFCPSession(destUPF.NodeID, node.DownLinkTunnel.PDR)
 
 	if teid, err := destUPF.GenerateTEID(); err != nil {
-		logger.CtxLog.Errorf("Generate downlink TEID fail: %s", err)
+		logger.SMAFContextLog.Errorf("Generate downlink TEID fail: %s", err)
 		return err
 	} else {
 		node.DownLinkTunnel.TEID = teid
@@ -164,18 +164,18 @@ func (node *DataPathNode) DeactivateUpLinkTunnel(smContext *SMContext) {
 
 	err := node.UPF.RemovePDR(pdr)
 	if err != nil {
-		logger.CtxLog.Warnln("Deactivaed UpLinkTunnel", err)
+		logger.SMAFContextLog.Warnln("Deactivaed UpLinkTunnel", err)
 	}
 
 	err = node.UPF.RemoveFAR(far)
 	if err != nil {
-		logger.CtxLog.Warnln("Deactivaed UpLinkTunnel", err)
+		logger.SMAFContextLog.Warnln("Deactivaed UpLinkTunnel", err)
 	}
 
 	if bar != nil {
 		err = node.UPF.RemoveBAR(bar)
 		if err != nil {
-			logger.CtxLog.Warnln("Deactivaed UpLinkTunnel", err)
+			logger.SMAFContextLog.Warnln("Deactivaed UpLinkTunnel", err)
 		}
 	}
 
@@ -192,18 +192,18 @@ func (node *DataPathNode) DeactivateDownLinkTunnel(smContext *SMContext) {
 
 	err := node.UPF.RemovePDR(pdr)
 	if err != nil {
-		logger.CtxLog.Warnln("Deactivaed DownLinkTunnel", err)
+		logger.SMAFContextLog.Warnln("Deactivaed DownLinkTunnel", err)
 	}
 
 	err = node.UPF.RemoveFAR(far)
 	if err != nil {
-		logger.CtxLog.Warnln("Deactivaed DownLinkTunnel", err)
+		logger.SMAFContextLog.Warnln("Deactivaed DownLinkTunnel", err)
 	}
 
 	if bar != nil {
 		err = node.UPF.RemoveBAR(bar)
 		if err != nil {
-			logger.CtxLog.Warnln("Deactivaed DownLinkTunnel", err)
+			logger.SMAFContextLog.Warnln("Deactivaed DownLinkTunnel", err)
 		}
 	}
 
@@ -317,18 +317,18 @@ func (dataPath *DataPath) ActivateTunnelAndPDR(smContext *SMContext) {
 		err := curDataPathNode.ActivateUpLinkTunnel(smContext)
 
 		if err != nil {
-			logger.CtxLog.Warnln(err)
+			logger.SMAFContextLog.Warnln(err)
 		}
 		err = curDataPathNode.ActivateDownLinkTunnel(smContext)
 
 		if err != nil {
-			logger.CtxLog.Warnln(err)
+			logger.SMAFContextLog.Warnln(err)
 		}
 	}
 
 	//Activate PDR
 	for curDataPathNode := firstDPNode; curDataPathNode != nil; curDataPathNode = curDataPathNode.Next() {
-		logger.CtxLog.Traceln("Calculate ", curDataPathNode.UPF.PFCPAddr().String())
+		logger.SMAFContextLog.Traceln("Calculate ", curDataPathNode.UPF.PFCPAddr().String())
 		curULTunnel := curDataPathNode.UpLinkTunnel
 		curDLTunnel := curDataPathNode.DownLinkTunnel
 

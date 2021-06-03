@@ -72,7 +72,7 @@ func NewUPTunnel() (tunnel *UPTunnel) {
 func (upTunnel *UPTunnel) AddDataPath(dataPath *DataPath) {
 	pathID, err := upTunnel.PathIDGenerator.Allocate()
 	if err != nil {
-		logger.CtxLog.Warnf("Allocate pathID error: %+v", err)
+		logger.SMAFContextLog.Warnf("Allocate pathID error: %+v", err)
 		return
 	}
 

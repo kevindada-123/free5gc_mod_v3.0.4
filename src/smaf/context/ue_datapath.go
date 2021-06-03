@@ -48,7 +48,7 @@ func NewUEPreConfigPaths(SUPI string, paths []factory.Path) (*UEPreConfigPaths, 
 
 		var pathID int64
 		if allocPathID, err := pathIDGenerator.Allocate(); err != nil {
-			logger.CtxLog.Warnf("Allocate pathID error: %+v", err)
+			logger.SMAFContextLog.Warnf("Allocate pathID error: %+v", err)
 			return nil, err
 		} else {
 			pathID = allocPathID
@@ -70,7 +70,7 @@ func NewUEPreConfigPaths(SUPI string, paths []factory.Path) (*UEPreConfigPaths, 
 			case lowerBound:
 				childName := path.UPF[idx+1]
 				if newChildNode, err := NewUEDataPathNode(childName); err != nil {
-					logger.CtxLog.Warnln(err)
+					logger.SMAFContextLog.Warnln(err)
 				} else {
 					childNode = newChildNode
 					ueNode.AddNext(childNode)
@@ -84,7 +84,7 @@ func NewUEPreConfigPaths(SUPI string, paths []factory.Path) (*UEPreConfigPaths, 
 				ueNode = childNode
 				childName := path.UPF[idx+1]
 				if childNode, err := NewUEDataPathNode(childName); err != nil {
-					logger.CtxLog.Warnln(err)
+					logger.SMAFContextLog.Warnln(err)
 				} else {
 					ueNode.AddNext(childNode)
 				}
@@ -95,8 +95,8 @@ func NewUEPreConfigPaths(SUPI string, paths []factory.Path) (*UEPreConfigPaths, 
 
 		}
 
-		logger.CtxLog.Traceln("New data path added")
-		logger.CtxLog.Traceln("\n" + dataPath.ToString() + "\n")
+		logger.SMAFContextLog.Traceln("New data path added")
+		logger.SMAFContextLog.Traceln("\n" + dataPath.ToString() + "\n")
 	}
 
 	uePreConfigPaths = &UEPreConfigPaths{

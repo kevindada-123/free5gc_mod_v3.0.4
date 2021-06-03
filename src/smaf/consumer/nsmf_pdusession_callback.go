@@ -18,7 +18,7 @@ func SendSMContextStatusNotification(uri string) (*models.ProblemDetails, error)
 		configuration := Nsmf_PDUSession.NewConfiguration()
 		client := Nsmf_PDUSession.NewAPIClient(configuration)
 
-		logger.CtxLog.Infoln("[SMF] Send SMContext Status Notification")
+		logger.SMAFContextLog.Infoln("[SMF] Send SMContext Status Notification")
 		httpResp, localErr := client.
 			IndividualSMContextNotificationApi.
 			SMContextNotification(context.Background(), uri, request)

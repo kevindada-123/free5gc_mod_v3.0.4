@@ -239,8 +239,8 @@ func (smContext *SMContext) PCFSelection() error {
 			apiError := err.(openapi.GenericOpenAPIError)
 			problemDetails := apiError.Model().(models.ProblemDetails)
 
-			logger.CtxLog.Warningf("NFDiscovery PCF return status: %d\n", status)
-			logger.CtxLog.Warningf("Detail: %v\n", problemDetails.Title)
+			logger.SMAFContextLog.Warningf("NFDiscovery PCF return status: %d\n", status)
+			logger.SMAFContextLog.Warningf("Detail: %v\n", problemDetails.Title)
 		}
 	}
 
@@ -328,7 +328,7 @@ func (smContext *SMContext) RemovePDRfromPFCPSession(nodeID pfcpType.NodeID, pdr
 func (smContext *SMContext) isAllowedPDUSessionType(nasPDUSessionType uint8) bool {
 	dnnPDUSessionType := smContext.DnnConfiguration.PduSessionTypes
 	if dnnPDUSessionType == nil {
-		logger.CtxLog.Errorf("this SMContext[%s] has no subscription pdu session type info\n", smContext.Ref)
+		logger.SMAFContextLog.Errorf("this SMContext[%s] has no subscription pdu session type info\n", smContext.Ref)
 		return false
 	}
 

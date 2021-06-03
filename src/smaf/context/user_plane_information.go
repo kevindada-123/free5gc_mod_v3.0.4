@@ -178,7 +178,7 @@ func (upi *UserPlaneInformation) ExistDefaultPath(dnn string) bool {
 
 func GenerateDataPath(upPath UPPath, smContext *SMContext) *DataPath {
 	if len(upPath) < 1 {
-		logger.CtxLog.Errorf("Invalid data path")
+		logger.SMAFContextLog.Errorf("Invalid data path")
 		return nil
 	}
 	var lowerBound = 0
@@ -230,7 +230,7 @@ func (upi *UserPlaneInformation) GenerateDefaultPath(dnn string) bool {
 	}
 
 	if source == nil {
-		logger.CtxLog.Errorf("There is no AN Node in config file!")
+		logger.SMAFContextLog.Errorf("There is no AN Node in config file!")
 		return false
 	}
 
@@ -246,7 +246,7 @@ func (upi *UserPlaneInformation) GenerateDefaultPath(dnn string) bool {
 	}
 
 	if destination == nil {
-		logger.CtxLog.Errorf("Can't find UPF with DNN [%s]\n", dnn)
+		logger.SMAFContextLog.Errorf("Can't find UPF with DNN [%s]\n", dnn)
 		return false
 	}
 

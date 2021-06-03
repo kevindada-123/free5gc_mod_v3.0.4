@@ -77,11 +77,11 @@ func AllocateLocalSEID() uint64 {
 
 func InitSmafContext(config *factory.Config) {
 	if config == nil {
-		logger.CtxLog.Error("Config is nil")
+		logger.SMAFContextLog.Error("Config is nil")
 		return
 	}
 
-	logger.CtxLog.Infof("SmafConfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
+	logger.SMAFContextLog.Infof("SmafConfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
 	configuration := config.Configuration
 	if configuration.SmfName != "" {
 		smafContext.Name = configuration.SmfName
@@ -89,7 +89,7 @@ func InitSmafContext(config *factory.Config) {
 
 	sbi := configuration.Sbi
 	if sbi == nil {
-		logger.CtxLog.Errorln("Configuration needs \"sbi\" value")
+		logger.SMAFContextLog.Errorln("Configuration needs \"sbi\" value")
 		return
 	} else {
 		smafContext.URIScheme = models.UriScheme(sbi.Scheme)
@@ -109,11 +109,11 @@ func InitSmafContext(config *factory.Config) {
 
 		smafContext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
 		if smafContext.BindingIPv4 != "" {
-			logger.CtxLog.Info("Parsing ServerIPv4 address from ENV Variable.")
+			logger.SMAFContextLog.Info("Parsing ServerIPv4 address from ENV Variable.")
 		} else {
 			smafContext.BindingIPv4 = sbi.BindingIPv4
 			if smafContext.BindingIPv4 == "" {
-				logger.CtxLog.Warn("Error parsing ServerIPv4 address as string. Using the 0.0.0.0 address as default.")
+				logger.SMAFContextLog.Warn("Error parsing ServerIPv4 address as string. Using the 0.0.0.0 address as default.")
 				smafContext.BindingIPv4 = "0.0.0.0"
 			}
 		}
@@ -122,7 +122,7 @@ func InitSmafContext(config *factory.Config) {
 	if configuration.NrfUri != "" {
 		smafContext.NrfUri = configuration.NrfUri
 	} else {
-		logger.CtxLog.Warn("NRF Uri is empty! Using localhost as NRF IPv4 address.")
+		logger.SMAFContextLog.Warn("NRF Uri is empty! Using localhost as NRF IPv4 address.")
 		smafContext.NrfUri = fmt.Sprintf("%s://%s:%d", smafContext.URIScheme, "127.0.0.1", 29510)
 	}
 
@@ -132,16 +132,16 @@ func InitSmafContext(config *factory.Config) {
 		}
 		pfcpAddrEnv := os.Getenv(pfcp.Addr)
 		if pfcpAddrEnv != "" {
-			logger.CtxLog.Info("Parsing PFCP IPv4 address from ENV variable found.")
+			logger.SMAFContextLog.Info("Parsing PFCP IPv4 address from ENV variable found.")
 			pfcp.Addr = pfcpAddrEnv
 		}
 		if pfcp.Addr == "" {
-			logger.CtxLog.Warn("Error parsing PFCP IPv4 address as string. Using the 0.0.0.0 address as default.")
+			logger.SMAFContextLog.Warn("Error parsing PFCP IPv4 address as string. Using the 0.0.0.0 address as default.")
 			pfcp.Addr = "0.0.0.0"
 		}
 		addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", pfcp.Addr, pfcp.Port))
 		if err != nil {
-			logger.CtxLog.Warnf("PFCP Parse Addr Fail: %v", err)
+			logger.SMAFContextLog.Warnf("PFCP Parse Addr Fail: %v", err)
 		}
 
 		smafContext.CPNodeID.NodeIdType = 0
@@ -184,11 +184,11 @@ func InitSMFUERouting(routingConfig *factory.RoutingConfig) {
 	}
 
 	if routingConfig == nil {
-		logger.CtxLog.Error("configuration needs the routing config")
+		logger.SMAFContextLog.Error("configuration needs the routing config")
 		return
 	}
 
-	logger.CtxLog.Infof("ue routing config Info: Version[%s] Description[%s]",
+	logger.SMAFContextLog.Infof("ue routing config Info: Version[%s] Description[%s]",
 		routingConfig.Info.Version, routingConfig.Info.Description)
 
 	UERoutingInfo := routingConfig.UERoutingInfo
@@ -198,7 +198,7 @@ func InitSMFUERouting(routingConfig *factory.RoutingConfig) {
 		supi := routingInfo.SUPI
 		uePreConfigPaths, err := NewUEPreConfigPaths(supi, routingInfo.PathList)
 		if err != nil {
-			logger.CtxLog.Warnln(err)
+			logger.SMAFContextLog.Warnln(err)
 			continue
 		}
 

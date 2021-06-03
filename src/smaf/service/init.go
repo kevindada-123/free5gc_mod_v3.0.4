@@ -26,6 +26,7 @@ import (
 	"free5gc/src/smaf/pfcp"
 	"free5gc/src/smaf/pfcp/message"
 	"free5gc/src/smaf/pfcp/udp"
+	"free5gc/src/smaf/ueauthentication"
 	"free5gc/src/smaf/util"
 )
 
@@ -117,6 +118,7 @@ func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (smaf *SMAF) Start() {
+	//20210601 initial ausf
 	context.InitSmafContext(&factory.SmafConfig)
 	//allocate id for each upf
 	context.AllocateUPFID()
@@ -153,6 +155,8 @@ func (smaf *SMAF) Start() {
 			eventexposure.AddService(router)
 		}
 	}
+	//start ausf service and network services
+	ueauthentication.AddService(router)
 	//20210601 run pfcp connection
 	udp.Run(pfcp.Dispatch)
 
@@ -165,7 +169,6 @@ func (smaf *SMAF) Start() {
 	//20210601 initialize http server
 	HTTPAddr := fmt.Sprintf("%s:%d", context.SMAF_Self().BindingIPv4, context.SMAF_Self().SBIPort)
 	server, err := http2_util.NewServer(HTTPAddr, util.SmafLogPath, router)
-
 	if server == nil {
 		initLog.Error("Initialize HTTP server failed:", err)
 		return

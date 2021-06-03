@@ -41,8 +41,8 @@ func AddPDUSessionAnchorAndULCL(smContext *context.SMContext, nodeID pfcpType.No
 		if exist {
 			delete(pendingUPF, trggierUPFIP)
 		} else {
-			logger.CtxLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingNewPSA")
-			logger.CtxLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
+			logger.SMAFContextLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingNewPSA")
+			logger.SMAFContextLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
 			return
 		}
 
@@ -60,8 +60,8 @@ func AddPDUSessionAnchorAndULCL(smContext *context.SMContext, nodeID pfcpType.No
 		if exist {
 			delete(pendingUPF, trggierUPFIP)
 		} else {
-			logger.CtxLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingULCL")
-			logger.CtxLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
+			logger.SMAFContextLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingULCL")
+			logger.SMAFContextLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
 			return
 		}
 
@@ -77,8 +77,8 @@ func AddPDUSessionAnchorAndULCL(smContext *context.SMContext, nodeID pfcpType.No
 		if exist {
 			delete(pendingUPF, trggierUPFIP)
 		} else {
-			logger.CtxLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingULCL")
-			logger.CtxLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
+			logger.SMAFContextLog.Warnln("In AddPDUSessionAnchorAndULCL case EstablishingULCL")
+			logger.SMAFContextLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
 			return
 		}
 
@@ -92,15 +92,15 @@ func AddPDUSessionAnchorAndULCL(smContext *context.SMContext, nodeID pfcpType.No
 		if exist {
 			delete(pendingUPF, trggierUPFIP)
 		} else {
-			logger.CtxLog.Warnln("In AddPDUSessionAnchorAndULCL case UpdatingRANAndIUPFUpLink")
-			logger.CtxLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
+			logger.SMAFContextLog.Warnln("In AddPDUSessionAnchorAndULCL case UpdatingRANAndIUPFUpLink")
+			logger.SMAFContextLog.Warnln("UPF IP ", trggierUPFIP, " doesn't exist in pending UPF!")
 			return
 		}
 
 		if pendingUPF.IsEmpty() {
 			bpMGR.AddingPSAState = context.Finished
 			bpMGR.BPStatus = context.AddPSASuccess
-			logger.CtxLog.Infoln("[SMF] Add PSA success")
+			logger.SMAFContextLog.Infoln("[SMF] Add PSA success")
 		}
 	}
 
@@ -377,7 +377,7 @@ func UpdateRANAndIUPFUpLink(smContext *context.SMContext) {
 
 		bpMGR.AddingPSAState = context.Finished
 		bpMGR.BPStatus = context.AddPSASuccess
-		logger.CtxLog.Infoln("[SMF] Add PSA success")
+		logger.SMAFContextLog.Infoln("[SMF] Add PSA success")
 	} else {
 		bpMGR.AddingPSAState = context.UpdatingRANAndIUPFUpLink
 	}
