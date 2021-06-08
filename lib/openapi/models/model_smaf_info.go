@@ -15,4 +15,8 @@ type SmafInfo struct {
 	TaiRangeList       *[]TaiRange           `json:"taiRangeList,omitempty" yaml:"taiRangeList" bson:"taiRangeList" mapstructure:"TaiRangeList"`
 	PgwFqdn            string                `json:"pgwFqdn,omitempty" yaml:"pgwFqdn" bson:"pgwFqdn" mapstructure:"PgwFqdn"`
 	AccessType         []AccessType          `json:"accessType,omitempty" yaml:"accessType" bson:"accessType" mapstructure:"AccessType"`
+	// 20210608 added ausfinfo
+	GroupId           string      `json:"groupId,omitempty" yaml:"groupId" bson:"groupId" mapstructure:"GroupId"`
+	SupiRanges        []SupiRange `json:"supiRanges,omitempty" yaml:"supiRanges" bson:"supiRanges" mapstructure:"SupiRanges"`
+	RoutingIndicators []string    `json:"routingIndicators,omitempty" yaml:"routingIndicators" bson:"routingIndicators" mapstructure:"RoutingIndicators"`
 }
