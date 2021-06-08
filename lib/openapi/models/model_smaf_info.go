@@ -10,11 +10,11 @@
 package models
 
 type SmafInfo struct {
-	SNssaiSmafInfoList *[]SnssaiSmafInfoItem `json:"sNssaiSmafInfoList" yaml:"sNssaiSmafInfoList" bson:"sNssaiSmafInfoList" mapstructure:"SNssaiSmafInfoList"`
-	TaiList            *[]Tai                `json:"taiList,omitempty" yaml:"taiList" bson:"taiList" mapstructure:"TaiList"`
-	TaiRangeList       *[]TaiRange           `json:"taiRangeList,omitempty" yaml:"taiRangeList" bson:"taiRangeList" mapstructure:"TaiRangeList"`
-	PgwFqdn            string                `json:"pgwFqdn,omitempty" yaml:"pgwFqdn" bson:"pgwFqdn" mapstructure:"PgwFqdn"`
-	AccessType         []AccessType          `json:"accessType,omitempty" yaml:"accessType" bson:"accessType" mapstructure:"AccessType"`
+	SNssaiSmfInfoList *[]SnssaiSmfInfoItem `json:"sNssaiSmfInfoList" yaml:"sNssaiSmfInfoList" bson:"sNssaiSmfInfoList" mapstructure:"SNssaiSmfInfoList"`
+	TaiList           *[]Tai               `json:"taiList,omitempty" yaml:"taiList" bson:"taiList" mapstructure:"TaiList"`
+	TaiRangeList      *[]TaiRange          `json:"taiRangeList,omitempty" yaml:"taiRangeList" bson:"taiRangeList" mapstructure:"TaiRangeList"`
+	PgwFqdn           string               `json:"pgwFqdn,omitempty" yaml:"pgwFqdn" bson:"pgwFqdn" mapstructure:"PgwFqdn"`
+	AccessType        []AccessType         `json:"accessType,omitempty" yaml:"accessType" bson:"accessType" mapstructure:"AccessType"`
 	// 20210608 added ausfinfo
 	GroupId           string      `json:"groupId,omitempty" yaml:"groupId" bson:"groupId" mapstructure:"GroupId"`
 	SupiRanges        []SupiRange `json:"supiRanges,omitempty" yaml:"supiRanges" bson:"supiRanges" mapstructure:"SupiRanges"`

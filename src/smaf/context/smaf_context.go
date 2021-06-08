@@ -7,6 +7,10 @@ import (
 	"sync"
 	"sync/atomic"
 
+	//20210608 added ausf context
+	"regexp"
+	"strconv"
+
 	"github.com/google/uuid"
 
 	"free5gc/lib/openapi/Nnrf_NFDiscovery"
@@ -29,7 +33,7 @@ type SMAFContext struct {
 	Name         string
 	NfInstanceID string
 
-	URIScheme    models.UriScheme
+	UriScheme    models.UriScheme
 	BindingIPv4  string
 	RegisterIPv4 string
 	SBIPort      int
@@ -61,6 +65,16 @@ type SMAFContext struct {
 	ULCLSupport         bool
 	UEPreConfigPathPool map[string]*UEPreConfigPaths
 	LocalSEIDCount      uint64
+
+	//20210608 added AUSFContext
+	suciSupiMap sync.Map
+	UePool      sync.Map
+	GroupID     string
+	Url         string
+	NfService   map[models.ServiceName]models.NfService
+	PlmnList    []models.PlmnId
+	UdmUeauUrl  string
+	snRegex     *regexp.Regexp
 }
 
 func AllocUEIP() net.IP {
@@ -83,8 +97,8 @@ func InitSmafContext(config *factory.Config) {
 
 	logger.SMAFContextLog.Infof("SmafConfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
 	configuration := config.Configuration
-	if configuration.SmfName != "" {
-		smafContext.Name = configuration.SmfName
+	if configuration.SmafName != "" {
+		smafContext.Name = configuration.SmafName
 	}
 
 	sbi := configuration.Sbi
@@ -92,7 +106,7 @@ func InitSmafContext(config *factory.Config) {
 		logger.SMAFContextLog.Errorln("Configuration needs \"sbi\" value")
 		return
 	} else {
-		smafContext.URIScheme = models.UriScheme(sbi.Scheme)
+		smafContext.UriScheme = models.UriScheme(sbi.Scheme)
 		smafContext.RegisterIPv4 = "127.0.0.1" // default localhost
 		smafContext.SBIPort = 29502            // default port
 		if sbi.RegisterIPv4 != "" {
@@ -118,12 +132,16 @@ func InitSmafContext(config *factory.Config) {
 			}
 		}
 	}
+	//20210608 added ausf context initialize
+	smafContext.NfId = smafContext.NfInstanceID
+	smafContext.Url = string(smafContext.UriScheme) + "://" + smafContext.RegisterIPv4 + ":" + strconv.Itoa(smafContext.SBIPort)
+	smafContext.PlmnList = append(smafContext.PlmnList, configuration.PlmnSupportList...)
 
 	if configuration.NrfUri != "" {
 		smafContext.NrfUri = configuration.NrfUri
 	} else {
 		logger.SMAFContextLog.Warn("NRF Uri is empty! Using localhost as NRF IPv4 address.")
-		smafContext.NrfUri = fmt.Sprintf("%s://%s:%d", smafContext.URIScheme, "127.0.0.1", 29510)
+		smafContext.NrfUri = fmt.Sprintf("%s://%s:%d", smafContext.UriScheme, "127.0.0.1", 29510)
 	}
 
 	if pfcp := configuration.PFCP; pfcp != nil {

@@ -307,6 +307,28 @@ func nnrfNFManagementOption(nf *models.NfProfile, nfprofile models.NfProfile) {
 		}
 		nf.SmfInfo = &a
 	}
+	//smafInfo 20210608 added
+	if nfprofile.SmafInfo != nil {
+
+		var a models.SmafInfo
+
+		if nfprofile.SmafInfo.SNssaiSmfInfoList != nil {
+			a.SNssaiSmfInfoList = nfprofile.SmafInfo.SNssaiSmfInfoList
+		}
+		if nfprofile.SmafInfo.TaiList != nil {
+			a.TaiList = nfprofile.SmafInfo.TaiList
+		}
+		if nfprofile.SmafInfo.TaiRangeList != nil {
+			a.TaiRangeList = nfprofile.SmafInfo.TaiRangeList
+		}
+		if nfprofile.SmafInfo.PgwFqdn != "" {
+			a.PgwFqdn = nfprofile.SmafInfo.PgwFqdn
+		}
+		if nfprofile.SmafInfo.AccessType != nil {
+			a.AccessType = nfprofile.SmafInfo.AccessType
+		}
+		nf.SmafInfo = &a
+	}
 	//upfInfo
 	if nfprofile.UpfInfo != nil {
 
