@@ -1690,28 +1690,56 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 	amfSelf := context.AMF_Self()
 
 	// TODO: consider ausf group id, Routing ID part of SUCI
+	/*
+		param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
+		resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
+		if err != nil {
+			logger.GmmLog.Error("AMF can not select an AUSF by NRF")
+			return false, err
+		}
+	*/
 	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
-	resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
+	resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_SMAF, models.NfType_AMF, &param)
 	if err != nil {
-		logger.GmmLog.Error("AMF can not select an AUSF by NRF")
+		logger.GmmLog.Error("AMF can not select an SMAF by NRF")
 		return false, err
+	} else {
+		fmt.Println("AMF Authentication SMAF resp", resp)
 	}
-
+	/*
+		// select the first AUSF, TODO: select base on other info
+		var ausfUri string
+		for _, nfProfile := range resp.NfInstances {
+			ue.AusfId = nfProfile.NfInstanceId
+			ausfUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NAUSF_AUTH, models.NfServiceStatus_REGISTERED)
+			if ausfUri != "" {
+				break
+			}
+		}
+		if ausfUri == "" {
+			err = fmt.Errorf("AMF can not select an AUSF by NRF")
+			logger.GmmLog.Errorf(err.Error())
+			return false, err
+		}
+	*/
 	// select the first AUSF, TODO: select base on other info
-	var ausfUri string
+	var smafUri string
 	for _, nfProfile := range resp.NfInstances {
 		ue.AusfId = nfProfile.NfInstanceId
-		ausfUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NAUSF_AUTH, models.NfServiceStatus_REGISTERED)
-		if ausfUri != "" {
+		smafUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NAUSF_AUTH, models.NfServiceStatus_REGISTERED)
+		if smafUri != "" {
 			break
 		}
 	}
-	if ausfUri == "" {
-		err = fmt.Errorf("AMF can not select an AUSF by NRF")
+	if smafUri == "" {
+		err = fmt.Errorf("AMF can not select an SMAF by NRF")
 		logger.GmmLog.Errorf(err.Error())
 		return false, err
+	} else {
+		fmt.Println("smafUri", smafUri)
 	}
-	ue.AusfUri = ausfUri
+
+	ue.AusfUri = smafUri
 
 	response, problemDetails, err := consumer.SendUEAuthenticationAuthenticateRequest(ue, nil)
 	if err != nil {
