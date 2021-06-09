@@ -29,30 +29,32 @@ func SetupNFProfile(config *factory.Config) {
 	//set NFServices
 	NFServices = new([]models.NfService)
 	for _, serviceName := range config.Configuration.ServiceNameList {
-		if serviceName == "nausf-auth" {
-			continue
-		} else {
-			*NFServices = append(*NFServices, models.NfService{
-				ServiceInstanceId: SMAF_Self().NfInstanceID + serviceName,
-				ServiceName:       models.ServiceName(serviceName),
-				Versions:          NfServiceVersion,
-				Scheme:            models.UriScheme_HTTPS,
-				NfServiceStatus:   models.NfServiceStatus_REGISTERED,
-				ApiPrefix:         fmt.Sprintf("%s://%s:%d", SMAF_Self().UriScheme, SMAF_Self().RegisterIPv4, SMAF_Self().SBIPort),
-			})
-		}
 		/*
-			*NFServices = append(*NFServices, models.NfService{
-				ServiceInstanceId: SMAF_Self().NfInstanceID + serviceName,
-				ServiceName:       models.ServiceName(serviceName),
-				Versions:          NfServiceVersion,
-				Scheme:            models.UriScheme_HTTPS,
-				NfServiceStatus:   models.NfServiceStatus_REGISTERED,
-				ApiPrefix:         fmt.Sprintf("%s://%s:%d", SMAF_Self().UriScheme, SMAF_Self().RegisterIPv4, SMAF_Self().SBIPort),
-			})
+			if serviceName == "nausf-auth" {
+				continue
+			} else {
+				*NFServices = append(*NFServices, models.NfService{
+					ServiceInstanceId: SMAF_Self().NfInstanceID + serviceName,
+					ServiceName:       models.ServiceName(serviceName),
+					Versions:          NfServiceVersion,
+					Scheme:            models.UriScheme_HTTPS,
+					NfServiceStatus:   models.NfServiceStatus_REGISTERED,
+					ApiPrefix:         fmt.Sprintf("%s://%s:%d", SMAF_Self().UriScheme, SMAF_Self().RegisterIPv4, SMAF_Self().SBIPort),
+				})
+			}
 		*/
+
+		*NFServices = append(*NFServices, models.NfService{
+			ServiceInstanceId: SMAF_Self().NfInstanceID + serviceName,
+			ServiceName:       models.ServiceName(serviceName),
+			Versions:          NfServiceVersion,
+			Scheme:            models.UriScheme_HTTPS,
+			NfServiceStatus:   models.NfServiceStatus_REGISTERED,
+			ApiPrefix:         fmt.Sprintf("%s://%s:%d", SMAF_Self().UriScheme, SMAF_Self().RegisterIPv4, SMAF_Self().SBIPort),
+		})
+
 	}
-	fmt.Println("show smaf NFServices:", NFServices)
+	//fmt.Println("show smaf NFServices:", NFServices)
 	//set smfInfo
 	SmafInfo = &models.SmfInfo{
 		SNssaiSmfInfoList: &smafContext.SnssaiInfos,

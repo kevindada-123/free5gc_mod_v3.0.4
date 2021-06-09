@@ -32,7 +32,7 @@ func BuildNFInstance(ausfContext *ausf_context.AUSFContext) (profile models.NfPr
 
 //func SendRegisterNFInstance(nrfUri, nfInstanceId string, profile models.NfProfile) (resouceNrfUri string,
 //    retrieveNfInstanceID string, err error) {
-func SendRegisterNFInstance(nrfUri, nfInstanceId string, profile models.NfProfile) (string, string, error) {
+func SendRegisterNFInstance(nrfUri, nfInstanceId string, profile models.NfProfile) (string, error) {
 	configuration := Nnrf_NFManagement.NewConfiguration()
 	configuration.SetBasePath(nrfUri)
 	client := Nnrf_NFManagement.NewAPIClient(configuration)
@@ -55,13 +55,15 @@ func SendRegisterNFInstance(nrfUri, nfInstanceId string, profile models.NfProfil
 		} else if status == http.StatusCreated {
 			// NFRegister
 			resourceUri := res.Header.Get("Location")
-			resourceNrfUri := resourceUri[:strings.Index(resourceUri, "/nnrf-nfm/")]
+			//resourceNrfUri := resourceUri[:strings.Index(resourceUri, "/nnrf-nfm/")]
 			retrieveNfInstanceID := resourceUri[strings.LastIndex(resourceUri, "/")+1:]
-			return resourceNrfUri, retrieveNfInstanceID, nil
+			//20210609 edited remove return resourceNrfUri
+			//return resourceNrfUri, retrieveNfInstanceID, nil
+			return retrieveNfInstanceID, nil
 		} else {
 			fmt.Println(fmt.Errorf("handler returned wrong status code %d", status))
 			fmt.Println(fmt.Errorf("NRF return wrong status code %d", status))
 		}
 	}
-	return "", "", nil
+	return "", nil
 }

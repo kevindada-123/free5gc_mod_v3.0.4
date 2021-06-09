@@ -69,12 +69,13 @@ type SMAFContext struct {
 	//20210608 added AUSFContext
 	suciSupiMap sync.Map
 	UePool      sync.Map
-	GroupID     string
-	Url         string
-	NfService   map[models.ServiceName]models.NfService
-	PlmnList    []models.PlmnId
-	UdmUeauUrl  string
-	snRegex     *regexp.Regexp
+	//NfId        string
+	GroupID    string
+	Url        string
+	NfService  map[models.ServiceName]models.NfService
+	PlmnList   []models.PlmnId
+	UdmUeauUrl string
+	snRegex    *regexp.Regexp
 }
 
 func AllocUEIP() net.IP {
@@ -133,7 +134,7 @@ func InitSmafContext(config *factory.Config) {
 		}
 	}
 	//20210608 added ausf context initialize
-	smafContext.NfId = smafContext.NfInstanceID
+	//smafContext.NfId = smafContext.NfInstanceID
 	smafContext.Url = string(smafContext.UriScheme) + "://" + smafContext.RegisterIPv4 + ":" + strconv.Itoa(smafContext.SBIPort)
 	smafContext.PlmnList = append(smafContext.PlmnList, configuration.PlmnSupportList...)
 

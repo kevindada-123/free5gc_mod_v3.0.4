@@ -111,7 +111,8 @@ func (ausf *AUSF) Start() {
 	if err != nil {
 		initLog.Error("Build AUSF Profile Error")
 	}
-	_, self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile)
+	//20210609 edited remove recieve resourceNrfUri
+	self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile)
 	if err != nil {
 		initLog.Errorf("AUSF register to NRF Error[%s]", err.Error())
 	}
