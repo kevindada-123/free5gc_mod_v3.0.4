@@ -78,6 +78,45 @@ type SMAFContext struct {
 	snRegex    *regexp.Regexp
 }
 
+//20210610 added from ausf_context.go
+type AusfUeContext struct {
+	Supi               string
+	Kausf              string
+	Kseaf              string
+	ServingNetworkName string
+	AuthStatus         models.AuthResult
+	UdmUeauUrl         string
+
+	// for 5G AKA
+	XresStar string
+
+	// for EAP-AKA'
+	K_aut string
+	XRES  string
+	Rand  string
+}
+
+type SuciSupiMap struct {
+	SupiOrSuci string
+	Supi       string
+}
+
+const (
+	EAP_AKA_PRIME_TYPENUM = 50
+)
+
+// Attribute Types for EAP-AKA'
+const (
+	AT_RAND_ATTRIBUTE         = 1
+	AT_AUTN_ATTRIBUTE         = 2
+	AT_RES_ATTRIBUTE          = 3
+	AT_MAC_ATTRIBUTE          = 11
+	AT_NOTIFICATION_ATTRIBUTE = 12
+	AT_IDENTITY_ATTRIBUTE     = 14
+	AT_KDF_INPUT_ATTRIBUTE    = 23
+	AT_KDF_ATTRIBUTE          = 24
+)
+
 func AllocUEIP() net.IP {
 	smafContext.UEAddressLock.Lock()
 	defer smafContext.UEAddressLock.Unlock()
@@ -95,7 +134,14 @@ func InitSmafContext(config *factory.Config) {
 		logger.SMAFContextLog.Error("Config is nil")
 		return
 	}
-
+	//20210610 added
+	snRegex, err := regexp.Compile("5G:mnc[0-9]{3}[.]mcc[0-9]{3}[.]3gppnetwork[.]org")
+	if err != nil {
+		logger.SMAFContextLog.Warnf("SN compile error: %+v", err)
+	} else {
+		smafContext.snRegex = snRegex
+	}
+	//
 	logger.SMAFContextLog.Infof("SmafConfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
 	configuration := config.Configuration
 	if configuration.SmafName != "" {
@@ -232,4 +278,67 @@ func SMAF_Self() *SMAFContext {
 
 func GetUserPlaneInformation() *UserPlaneInformation {
 	return smafContext.UserPlaneInformation
+}
+
+func NewAusfUeContext(identifier string) (ausfUeContext *AusfUeContext) {
+	ausfUeContext = new(AusfUeContext)
+	ausfUeContext.Supi = identifier // supi
+	return ausfUeContext
+}
+
+func AddAusfUeContextToPool(ausfUeContext *AusfUeContext) {
+	smafContext.UePool.Store(ausfUeContext.Supi, ausfUeContext)
+}
+
+func CheckIfAusfUeContextExists(ref string) bool {
+	_, ok := smafContext.UePool.Load(ref)
+	return ok
+}
+
+func GetAusfUeContext(ref string) *AusfUeContext {
+	context, _ := smafContext.UePool.Load(ref)
+	ausfUeContext := context.(*AusfUeContext)
+	return ausfUeContext
+}
+
+func AddSuciSupiPairToMap(supiOrSuci string, supi string) {
+	newPair := new(SuciSupiMap)
+	newPair.SupiOrSuci = supiOrSuci
+	newPair.Supi = supi
+	smafContext.suciSupiMap.Store(supiOrSuci, newPair)
+}
+
+func CheckIfSuciSupiPairExists(ref string) bool {
+	_, ok := smafContext.suciSupiMap.Load(ref)
+	return ok
+}
+
+func GetSupiFromSuciSupiMap(ref string) (supi string) {
+	val, _ := smafContext.suciSupiMap.Load(ref)
+	suciSupiMap := val.(*SuciSupiMap)
+	supi = suciSupiMap.Supi
+	return supi
+}
+
+func IsServingNetworkAuthorized(lookup string) bool {
+	fmt.Println("in smaf IsServingNetworkAuthorized")
+	if smafContext.snRegex.MatchString(lookup) {
+		return true
+	} else {
+		return false
+	}
+}
+
+/* replaced by SMAF_Self()
+func AUSF_Self() *AUSFContext {
+	return &smafContext
+}
+*/
+/* replaced by SMAF_SelfID()
+func (a *AUSFContext) AUSF_SelfID() string {
+	return a.NfId
+}
+*/
+func (a *SMAFContext) SMAF_SelfID() string {
+	return a.NfInstanceID
 }

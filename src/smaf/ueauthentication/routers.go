@@ -11,7 +11,7 @@ package ueauthentication
 
 import (
 	"free5gc/lib/logger_util"
-	"free5gc/src/ausf/logger"
+	"free5gc/src/smaf/logger"
 	"net/http"
 	"strings"
 

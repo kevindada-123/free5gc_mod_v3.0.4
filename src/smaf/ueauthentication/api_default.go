@@ -13,8 +13,8 @@ import (
 	"free5gc/lib/http_wrapper"
 	"free5gc/lib/openapi"
 	"free5gc/lib/openapi/models"
-	"free5gc/src/ausf/logger"
-	"free5gc/src/ausf/producer"
+	"free5gc/src/smaf/logger"
+	"free5gc/src/smaf/producer"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
