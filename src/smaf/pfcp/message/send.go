@@ -148,7 +148,7 @@ func SendPfcpSessionEstablishmentRequest(
 		IP:   upNodeID.ResolveNodeIdToIp(),
 		Port: pfcpUdp.PFCP_PORT,
 	}
-	logger.PduSessLog.Traceln("[SMF] Send SendPfcpSessionEstablishmentRequest")
+	logger.PduSessLog.Traceln("[SMAF] Send SendPfcpSessionEstablishmentRequest")
 	logger.PduSessLog.Traceln("Send to addr ", upaddr.String())
 
 	udp.SendPfcp(message, upaddr)

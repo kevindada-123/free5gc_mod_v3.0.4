@@ -229,7 +229,7 @@ func (smContext *SMContext) PCFSelection() error {
 	rep, res, err := SMAF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
-		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMF, &localVarOptionals)
+		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMAF, &localVarOptionals)
 	if err != nil {
 		return err
 	}

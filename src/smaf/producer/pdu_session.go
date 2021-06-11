@@ -264,7 +264,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 		logger.PduSessLog.Traceln("Binary Data N1 SmMessage isn't nil!")
 		m := nas.NewMessage()
 		err := m.GsmMessageDecode(&body.BinaryDataN1SmMessage)
-		logger.PduSessLog.Traceln("[SMF] UpdateSmContextRequest N1SmMessage: ", m)
+		logger.PduSessLog.Traceln("[SMAF] UpdateSmContextRequest N1SmMessage: ", m)
 		if err != nil {
 			logger.PduSessLog.Error(err)
 			httpResponse := &http_wrapper.Response{
@@ -334,7 +334,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 				logger.PduSessLog.Infoln("SMContext state: ", smContext.SMContextState.String())
 			}
 			// Send Release Notify to AMF
-			logger.PduSessLog.Infoln("[SMF] Send Update SmContext Response")
+			logger.PduSessLog.Infoln("[SMAF] Send Update SmContext Response")
 			smContext.SMContextState = smaf_context.InActive
 			logger.SMAFContextLog.Traceln("SMContextState Change State: ", smContext.SMContextState.String())
 			response.JsonData.UpCnxState = models.UpCnxState_DEACTIVATED
@@ -354,7 +354,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 		}
 
 	} else {
-		logger.PduSessLog.Traceln("[SMF] Binary Data N1 SmMessage is nil!")
+		logger.PduSessLog.Traceln("[SMAF] Binary Data N1 SmMessage is nil!")
 	}
 
 	tunnel := smContext.Tunnel
@@ -469,7 +469,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 		smContext.SMContextState = smaf_context.PFCPModification
 		logger.SMAFContextLog.Traceln("SMContextState Change State: ", smContext.SMContextState.String())
 	case models.N2SmInfoType_PDU_RES_REL_RSP:
-		logger.PduSessLog.Infoln("[SMF] N2 PDUSession Release Complete ")
+		logger.PduSessLog.Infoln("[SMAF] N2 PDUSession Release Complete ")
 		if smContext.PDUSessionRelease_DUE_TO_DUP_PDU_ID {
 			if smContext.SMContextState != smaf_context.InActivePending {
 				//Wait till the state becomes Active again
@@ -479,7 +479,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 			}
 			smContext.SMContextState = smaf_context.InActive
 			logger.SMAFContextLog.Traceln("SMContextState Change State: ", smContext.SMContextState.String())
-			logger.PduSessLog.Infoln("[SMF] Send Update SmContext Response")
+			logger.PduSessLog.Infoln("[SMAF] Send Update SmContext Response")
 			response.JsonData.UpCnxState = models.UpCnxState_DEACTIVATED
 
 			smContext.PDUSessionRelease_DUE_TO_DUP_PDU_ID = false
@@ -504,7 +504,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 				logger.PduSessLog.Infoln("The SMContext State should be InActivePending State")
 				logger.PduSessLog.Infoln("SMContext state: ", smContext.SMContextState.String())
 			}
-			logger.PduSessLog.Infoln("[SMF] Send Update SmContext Response")
+			logger.PduSessLog.Infoln("[SMAF] Send Update SmContext Response")
 			smContext.SMContextState = smaf_context.InActivePending
 			logger.SMAFContextLog.Traceln("SMContextState Change State: ", smContext.SMContextState.String())
 
@@ -691,7 +691,7 @@ func HandlePDUSessionSMContextUpdate(smContextRef string, body models.UpdateSmCo
 		sendPFCPDelete = true
 		smContext.SMContextState = smaf_context.PFCPModification
 		logger.SMAFContextLog.Traceln("SMContextState Change State: ", smContext.SMContextState.String())
-		logger.SMAFContextLog.Infoln("[SMF] Cause_REL_DUE_TO_DUPLICATE_SESSION_ID")
+		logger.SMAFContextLog.Infoln("[SMAF] Cause_REL_DUE_TO_DUPLICATE_SESSION_ID")
 	}
 
 	var httpResponse *http_wrapper.Response

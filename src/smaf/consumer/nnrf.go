@@ -108,7 +108,7 @@ func SendNFDiscoveryUDM() (*models.ProblemDetails, error) {
 	result, httpResp, localErr := smaf_context.SMAF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
-		SearchNFInstances(context.TODO(), models.NfType_UDM, models.NfType_SMF, &localVarOptionals)
+		SearchNFInstances(context.TODO(), models.NfType_UDM, models.NfType_SMAF, &localVarOptionals)
 
 	if localErr == nil {
 		smaf_context.SMAF_Self().UDMProfile = result.NfInstances[0]
@@ -170,7 +170,7 @@ func SendNFDiscoveryPCF() (problemDetails *models.ProblemDetails, err error) {
 
 func SendNFDiscoveryServingAMF(smContext *smaf_context.SMContext) (*models.ProblemDetails, error) {
 	targetNfType := models.NfType_AMF
-	requesterNfType := models.NfType_SMF
+	requesterNfType := models.NfType_SMAF
 
 	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 

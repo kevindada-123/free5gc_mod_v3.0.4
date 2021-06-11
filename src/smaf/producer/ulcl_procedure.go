@@ -100,7 +100,7 @@ func AddPDUSessionAnchorAndULCL(smContext *context.SMContext, nodeID pfcpType.No
 		if pendingUPF.IsEmpty() {
 			bpMGR.AddingPSAState = context.Finished
 			bpMGR.BPStatus = context.AddPSASuccess
-			logger.SMAFContextLog.Infoln("[SMF] Add PSA success")
+			logger.SMAFContextLog.Infoln("[SMAF] Add PSA success")
 		}
 	}
 
@@ -221,7 +221,7 @@ func EstablishULCL(smContext *context.SMContext) {
 	}
 
 	bpMGR.AddingPSAState = context.EstablishingULCL
-	logger.PfcpLog.Info("[SMF] Establish ULCL msg has been send")
+	logger.PfcpLog.Info("[SMAF] Establish ULCL msg has been send")
 
 }
 
@@ -252,7 +252,7 @@ func UpdatePSA2DownLink(smContext *context.SMContext) {
 				curDPNodeIP := curDataPathNode.UPF.NodeID.ResolveNodeIdToIp().String()
 				bpMGR.PendingUPF[curDPNodeIP] = true
 				message.SendPfcpSessionModificationRequest(curDataPathNode.UPF.NodeID, smContext, pdrList, farList, barList)
-				logger.PfcpLog.Info("[SMF] Update PSA2 downlink msg has been send")
+				logger.PfcpLog.Info("[SMAF] Update PSA2 downlink msg has been send")
 				break
 			}
 		}
@@ -377,7 +377,7 @@ func UpdateRANAndIUPFUpLink(smContext *context.SMContext) {
 
 		bpMGR.AddingPSAState = context.Finished
 		bpMGR.BPStatus = context.AddPSASuccess
-		logger.SMAFContextLog.Infoln("[SMF] Add PSA success")
+		logger.SMAFContextLog.Infoln("[SMAF] Add PSA success")
 	} else {
 		bpMGR.AddingPSAState = context.UpdatingRANAndIUPFUpLink
 	}

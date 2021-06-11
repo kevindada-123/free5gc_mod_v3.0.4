@@ -226,7 +226,7 @@ func HandlePfcpSessionModificationResponse(msg *pfcpUdp.Message) {
 	}
 
 	if pfcpRsp.Cause.CauseValue == pfcpType.CauseRequestAccepted {
-		logger.PduSessLog.Infoln("[SMF] PFCP Modification Resonse Accept")
+		logger.PduSessLog.Infoln("[SMAF] PFCP Modification Resonse Accept")
 		if smContext.SMContextState == smaf_context.PFCPModification {
 
 			upfNodeID := smContext.GetNodeIDByLocalSEID(SEID)

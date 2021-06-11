@@ -1703,9 +1703,12 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 	if err != nil {
 		logger.GmmLog.Error("AMF can not select an SMAF by NRF")
 		return false, err
-	} else {
-		fmt.Println("AMF Authentication SMAF resp", resp)
 	}
+	/*
+		else {
+			fmt.Println("AMF Authentication SMAF resp", resp)
+		}
+	*/
 	/*
 		// select the first AUSF, TODO: select base on other info
 		var ausfUri string
