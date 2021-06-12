@@ -144,7 +144,7 @@ func (smaf *SMAF) Start() {
 		smaf.Terminate()
 		os.Exit(0)
 	}()
-	//start smaf service and network services
+	//start smaf(SMF) service and network services
 	oam.AddService(router)
 	callback.AddService(router)
 	for _, serviceName := range factory.SmafConfig.Configuration.ServiceNameList {

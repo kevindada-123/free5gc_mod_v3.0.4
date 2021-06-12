@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/antihax/optional"
-	"github.com/gin-contrib/cors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
@@ -116,17 +115,18 @@ func (pcf *PCF) Start() {
 	policyauthorization.AddService(router)
 	httpcallback.AddService(router)
 	oam.AddService(router)
-
-	router.Use(cors.New(cors.Config{
-		AllowMethods: []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"},
-		AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "User-Agent",
-			"Referrer", "Host", "Token", "X-Requested-With"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowAllOrigins:  true,
-		MaxAge:           86400,
-	}))
-
+	//this function can be deleted or commented with distrubing test procedure
+	/*
+		router.Use(cors.New(cors.Config{
+			AllowMethods: []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"},
+			AllowHeaders: []string{"Origin", "Content-Length", "Content-Type", "User-Agent",
+				"Referrer", "Host", "Token", "X-Requested-With"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			AllowAllOrigins:  true,
+			MaxAge:           86400,
+		}))
+	*/
 	self := context.PCF_Self()
 	util.InitpcfContext(self)
 

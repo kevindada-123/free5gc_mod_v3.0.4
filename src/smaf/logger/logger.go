@@ -27,6 +27,17 @@ var EapAuthComfirmLog *logrus.Entry
 var AusfHandlerLog *logrus.Entry
 var AusfContextLog *logrus.Entry
 
+//20210612 add pcf log entry
+var PCFHandlerLog *logrus.Entry
+var Bdtpolicylog *logrus.Entry
+var PolicyAuthorizationlog *logrus.Entry
+var AMpolicylog *logrus.Entry
+var SMpolicylog *logrus.Entry
+var PCFConsumerlog *logrus.Entry
+var PCFUtilLog *logrus.Entry
+var PCFCallbackLog *logrus.Entry
+var PCFOamLog *logrus.Entry
+
 func init() {
 	log = logrus.New()
 	log.SetReportCaller(false)
@@ -61,6 +72,16 @@ func init() {
 	Auth5gAkaComfirmLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "5gAkaAuth"})
 	EapAuthComfirmLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "EapAkaAuth"})
 	AusfHandlerLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "AusfHandler"})
+	//20210612 add pcf log format
+	PCFHandlerLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PCFHandler"})
+	Bdtpolicylog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "Bdtpolicy"})
+	AMpolicylog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "Ampolicy"})
+	PolicyAuthorizationlog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PolicyAuth"})
+	SMpolicylog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "SMpolicy"})
+	PCFUtilLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PCFUtil"})
+	PCFCallbackLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PCFCallback"})
+	PCFConsumerlog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PCFConsumer"})
+	PCFOamLog = log.WithFields(logrus.Fields{"component": "SMAF", "category": "PCFOAM"})
 }
 
 func SetLogLevel(level logrus.Level) {
