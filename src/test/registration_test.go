@@ -32,12 +32,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	//20210615 added
+	"runtime"
 )
 
 const ranIpAddr string = "10.200.200.1"
 
 // Registration
 func TestRegistration(t *testing.T) {
+	PrintMemUsage()
 	var n int
 	var sendMsg []byte
 	var recvMsg = make([]byte, 2048)
@@ -217,6 +221,7 @@ func TestRegistration(t *testing.T) {
 	_, err = conn.Write(sendMsg)
 	assert.Nil(t, err)
 
+	PrintMemUsage()
 	// wait 1s
 	time.Sleep(1 * time.Second)
 
@@ -2509,4 +2514,17 @@ func TestReSynchronisation(t *testing.T) {
 
 	// close Connection
 	conn.Close()
+}
+
+func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	fmt.Printf("\nAlloc = %v MiB", bToMb(m.Alloc))
+	fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
+	fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+	fmt.Printf("\tNumGC = %v\n", m.NumGC)
+}
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
 }
