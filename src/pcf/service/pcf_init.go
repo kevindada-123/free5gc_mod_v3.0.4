@@ -127,22 +127,26 @@ func (pcf *PCF) Start() {
 			MaxAge:           86400,
 		}))
 	*/
-	self := context.PCF_Self()
-	util.InitpcfContext(self)
+	//self := context.PCF_Self()
+	//context.InitpcfContext(self)
+	context.InitpcfContext()
+	/*
+		profile, err := consumer.BuildNFInstance(self)
+		if err != nil {
+			initLog.Error("Build PCF Profile Error")
+		}
 
-	addr := fmt.Sprintf("%s:%d", self.BindingIPv4, self.SBIPort)
-
-	profile, err := consumer.BuildNFInstance(self)
-	if err != nil {
-		initLog.Error("Build PCF Profile Error")
-	}
-	_, self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile)
-	if err != nil {
-		initLog.Errorf("PCF register to NRF Error[%s]", err.Error())
-	}
+		_, self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile)
+		if err != nil {
+			initLog.Errorf("PCF register to NRF Error[%s]", err.Error())
+		}
+	*/
+	// 20210618 added
+	consumer.SendNFRegistration()
+	var err error
 
 	// subscribe to all Amfs' status change
-	amfInfos := consumer.SearchAvailableAMFs(self.NrfUri, models.ServiceName_NAMF_COMM)
+	amfInfos := consumer.SearchAvailableAMFs(context.PCF_Self().NrfUri, models.ServiceName_NAMF_COMM)
 	for _, amfInfo := range amfInfos {
 		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
 		if len(guamiList) == 0 {
@@ -162,18 +166,20 @@ func (pcf *PCF) Start() {
 	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{
 		ServiceNames: optional.NewInterface([]models.ServiceName{models.ServiceName_NUDR_DR}),
 	}
-	resp, err := consumer.SendSearchNFInstances(self.NrfUri, models.NfType_UDR, models.NfType_PCF, param)
+	resp, err := consumer.SendSearchNFInstances(context.PCF_Self().NrfUri, models.NfType_UDR, models.NfType_PCF, param)
 	for _, nfProfile := range resp.NfInstances {
 		udruri := util.SearchNFServiceUri(nfProfile, models.ServiceName_NUDR_DR, models.NfServiceStatus_REGISTERED)
 		if udruri != "" {
-			self.SetDefaultUdrURI(udruri)
+			//fmt.Println("udruri : ", udruri)
+			context.PCF_Self().SetDefaultUdrURI(udruri)
 			break
 		}
 	}
 	if err != nil {
 		initLog.Errorln(err)
 	}
-	server, err := http2_util.NewServer(addr, util.PCF_LOG_PATH, router)
+	HTTPAddr := fmt.Sprintf("%s:%d", context.PCF_Self().BindingIPv4, context.PCF_Self().SBIPort)
+	server, err := http2_util.NewServer(HTTPAddr, util.PCF_LOG_PATH, router)
 	if server == nil {
 		initLog.Errorf("Initialize HTTP server failed: %+v", err)
 		return

@@ -27,7 +27,7 @@ func SendNFRegistration() error {
 		NfStatus:      models.NfStatus_REGISTERED,
 		Ipv4Addresses: []string{smaf_context.SMAF_Self().RegisterIPv4},
 		NfServices:    smaf_context.NFServices,
-		SmfInfo:       smaf_context.SmafInfo,
+		SmafInfo:      smaf_context.SmafInfo,
 	}
 	var rep models.NfProfile
 	var res *http.Response

@@ -13,6 +13,8 @@ import (
 
 	"github.com/google/uuid"
 
+	"free5gc/lib/idgenerator"
+	"free5gc/lib/openapi"
 	"free5gc/lib/openapi/Nnrf_NFDiscovery"
 	"free5gc/lib/openapi/Nnrf_NFManagement"
 	"free5gc/lib/openapi/Nudm_SubscriberDataManagement"
@@ -76,6 +78,21 @@ type SMAFContext struct {
 	PlmnList   []models.PlmnId
 	UdmUeauUrl string
 	snRegex    *regexp.Regexp
+	//20210618 added PCFContext
+	TimeFormat      string
+	DefaultBdtRefId string
+	PcfServiceUris  map[models.ServiceName]string
+	PcfSuppFeats    map[models.ServiceName]openapi.SupportedFeature
+	DefaultUdrURI   string
+	// Bdt Policy related
+	BdtPolicyPool        sync.Map
+	BdtPolicyIDGenerator *idgenerator.IDGenerator
+	// App Session related
+	AppSessionPool sync.Map
+	// AMF Status Change Subscription related
+	AMFStatusSubsData map[string]AMFStatusSubscriptionData // subscriptionId as key
+	//lock
+	DefaultUdrURILock sync.RWMutex
 }
 
 //20210610 added from ausf_context.go
@@ -116,6 +133,15 @@ const (
 	AT_KDF_INPUT_ATTRIBUTE    = 23
 	AT_KDF_ATTRIBUTE          = 24
 )
+
+//20210618 added from pcf_context.go
+type AMFStatusSubscriptionData struct {
+	AmfUri string
+
+	AmfStatusUri string
+
+	GuamiList []models.Guami
+}
 
 func AllocUEIP() net.IP {
 	smafContext.UEAddressLock.Lock()
@@ -341,4 +367,9 @@ func (a *AUSFContext) AUSF_SelfID() string {
 */
 func (a *SMAFContext) SMAF_SelfID() string {
 	return a.NfInstanceID
+}
+
+// 20210618 added from pcf_context.go
+func GetUri(name models.ServiceName) string {
+	return smafContext.PcfServiceUris[name]
 }

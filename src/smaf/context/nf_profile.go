@@ -11,7 +11,7 @@ var NFServices *[]models.NfService
 
 var NfServiceVersion *[]models.NfServiceVersion
 
-var SmafInfo *models.SmfInfo
+var SmafInfo *models.SmafInfo
 
 func SetupNFProfile(config *factory.Config) {
 	//Set time
@@ -56,7 +56,7 @@ func SetupNFProfile(config *factory.Config) {
 	}
 	//fmt.Println("show smaf NFServices:", NFServices)
 	//set smfInfo
-	SmafInfo = &models.SmfInfo{
+	SmafInfo = &models.SmafInfo{
 		SNssaiSmfInfoList: &smafContext.SnssaiInfos,
 	}
 }

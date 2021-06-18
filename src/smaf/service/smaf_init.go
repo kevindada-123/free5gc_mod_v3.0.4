@@ -118,7 +118,7 @@ func (smaf *SMAF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (smaf *SMAF) Start() {
-	//20210601 initial ausf
+	//20210601 initial smaf
 	context.InitSmafContext(&factory.SmafConfig)
 	//allocate id for each upf
 	context.AllocateUPFID()
