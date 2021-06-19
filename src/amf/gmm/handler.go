@@ -367,7 +367,8 @@ func selectSmf(ue *context.AmfUe, anType models.AccessType, pduSession *models.P
 
 	logger.GmmLog.Debugf("Search SMF from NRF[%s]", nrfUri)
 
-	result, err := consumer.SendSearchNFInstances(nrfUri, models.NfType_SMF, models.NfType_AMF, &param)
+	//result, err := consumer.SendSearchNFInstances(nrfUri, models.NfType_SMF, models.NfType_AMF, &param)
+	result, err := consumer.SendSearchNFInstances(nrfUri, models.NfType_SMAF, models.NfType_AMF, &param)
 
 	if err != nil || len(result.NfInstances) == 0 {
 		logger.GmmLog.Errorln("number of result.NfInstances :", len(result.NfInstances))

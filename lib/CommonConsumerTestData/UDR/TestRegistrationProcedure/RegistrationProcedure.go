@@ -10,6 +10,9 @@ const (
 
 var TestAmDataTable = make(map[string]models.AccessAndMobilitySubscriptionData)
 var TestSmfSelDataTable = make(map[string]models.SmfSelectionSubscriptionData)
+
+//20210619 added
+var TestSmafSelDataTable = make(map[string]models.SmafSelectionSubscriptionData)
 var TestSmSelDataTable = make(map[string]models.SessionManagementSubscriptionData)
 var TestAmPolicyDataTable = make(map[string]models.AmPolicyData)
 var TestSmPolicyDataTable = make(map[string]models.SmPolicyData)

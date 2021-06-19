@@ -76,7 +76,7 @@ func init() {
 		for _, service := range NFs {
 			service.Initialize(cli)
 			go service.Start()
-			time.Sleep(2000 * time.Millisecond)
+			time.Sleep(600 * time.Millisecond)
 		}
 	} else {
 		MongoDBLibrary.SetMongoDB("free5gc", "mongodb://127.0.0.1:27017")

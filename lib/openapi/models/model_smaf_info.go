@@ -19,4 +19,8 @@ type SmafInfo struct {
 	GroupId           string      `json:"groupId,omitempty" yaml:"groupId" bson:"groupId" mapstructure:"GroupId"`
 	SupiRanges        []SupiRange `json:"supiRanges,omitempty" yaml:"supiRanges" bson:"supiRanges" mapstructure:"SupiRanges"`
 	RoutingIndicators []string    `json:"routingIndicators,omitempty" yaml:"routingIndicators" bson:"routingIndicators" mapstructure:"RoutingIndicators"`
+	// 20210618 added pcfinfo
+	DnnList     []string `json:"dnnList,omitempty" yaml:"dnnList" bson:"dnnList" mapstructure:"DnnList"`
+	RxDiamHost  string   `json:"rxDiamHost,omitempty" yaml:"rxDiamHost" bson:"rxDiamHost" mapstructure:"RxDiamHost"`
+	RxDiamRealm string   `json:"rxDiamRealm,omitempty" yaml:"rxDiamRealm" bson:"rxDiamRealm" mapstructure:"RxDiamRealm"`
 }

@@ -8,19 +8,20 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/src/nrf/context"
 	"free5gc/src/nrf/logger"
-	"go.mongodb.org/mongo-driver/bson"
 	"math/big"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func HandleNFDiscoveryRequest(request *http_wrapper.Request) *http_wrapper.Response {
 	// Get all query parameters
 	logger.DiscoveryLog.Infoln("Handle NFDiscoveryRequest")
-
+	//fmt.Printf("request detail: %+v\n", request)
 	response, problemDetails := NFDiscoveryProcedure(request.Query)
 	// Send Response
 	// step 4: process the return value from step 3
@@ -394,6 +395,18 @@ func buildFilter(queryParameters url.Values) bson.M {
 					{
 						"pcfInfo.dnnList": bson.M{
 							"$exists": false,
+						},
+					},
+				},
+			}
+		} else if targetNfType == "SMAF" { //20210619 added
+			dnnFilter = bson.M{
+				"smfInfo.sNssaiSmfInfoList": bson.M{
+					"$elemMatch": bson.M{
+						"dnnSmfInfoList": bson.M{
+							"$elemMatch": bson.M{
+								"dnn": dnn,
+							},
 						},
 					},
 				},
