@@ -36,8 +36,8 @@ var NFs = []app.NetworkFunction{
 	&amf_service.AMF{},
 	//&smf_service.SMF{},
 	//20210528
-	&smaf_service.SMAF{},
 	&udr_service.UDR{},
+	&smaf_service.SMAF{},
 	&pcf_service.PCF{},
 	&udm_service.UDM{},
 	&nssf_service.NSSF{},
@@ -76,7 +76,7 @@ func init() {
 		for _, service := range NFs {
 			service.Initialize(cli)
 			go service.Start()
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(2000 * time.Millisecond)
 		}
 	} else {
 		MongoDBLibrary.SetMongoDB("free5gc", "mongodb://127.0.0.1:27017")

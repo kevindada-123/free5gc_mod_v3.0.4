@@ -27,6 +27,9 @@ import (
 
 func init() {
 	smafContext.NfInstanceID = uuid.New().String()
+	SMAF_Self().PcfServiceUris = make(map[models.ServiceName]string)
+	SMAF_Self().PcfSuppFeats = make(map[models.ServiceName]openapi.SupportedFeature)
+	SMAF_Self().AMFStatusSubsData = make(map[string]AMFStatusSubscriptionData)
 }
 
 var smafContext SMAFContext
@@ -68,7 +71,7 @@ type SMAFContext struct {
 	UEPreConfigPathPool map[string]*UEPreConfigPaths
 	LocalSEIDCount      uint64
 
-	//20210608 added AUSFContext
+	//20210608 added from AUSFContext
 	suciSupiMap sync.Map
 	UePool      sync.Map
 	//NfId        string
@@ -78,7 +81,7 @@ type SMAFContext struct {
 	PlmnList   []models.PlmnId
 	UdmUeauUrl string
 	snRegex    *regexp.Regexp
-	//20210618 added PCFContext
+	//20210618 added from PCFContext
 	TimeFormat      string
 	DefaultBdtRefId string
 	PcfServiceUris  map[models.ServiceName]string
@@ -298,6 +301,7 @@ func InitSMFUERouting(routingConfig *factory.RoutingConfig) {
 
 }
 
+//// Create new SMAF context
 func SMAF_Self() *SMAFContext {
 	return &smafContext
 }
@@ -372,4 +376,15 @@ func (a *SMAFContext) SMAF_SelfID() string {
 // 20210618 added from pcf_context.go
 func GetUri(name models.ServiceName) string {
 	return smafContext.PcfServiceUris[name]
+}
+func (context *SMAFContext) GetIPv4Uri() string {
+	return fmt.Sprintf("%s://%s:%d", context.UriScheme, context.RegisterIPv4, context.SBIPort)
+}
+
+//20210619 added from pcf_context.go
+//SetDefaultUdrURI ... function to set DefaultUdrURI
+func (context *SMAFContext) SetDefaultUdrURI(uri string) {
+	context.DefaultUdrURILock.Lock()
+	defer context.DefaultUdrURILock.Unlock()
+	context.DefaultUdrURI = uri
 }

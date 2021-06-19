@@ -7,11 +7,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/antihax/optional"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
 	"free5gc/lib/http2_util"
 	"free5gc/lib/logger_util"
+	"free5gc/lib/openapi/Nnrf_NFDiscovery"
 	"free5gc/lib/openapi/models"
 	"free5gc/lib/path_util"
 	"free5gc/src/app"
@@ -166,6 +168,45 @@ func (smaf *SMAF) Start() {
 	}
 
 	time.Sleep(1000 * time.Millisecond)
+
+	//20210619 added pcf
+	// subscribe to all Amfs' status change
+	amfInfos := consumer.SearchAvailableAMFs(context.SMAF_Self().NrfUri, models.ServiceName_NAMF_COMM)
+	//fmt.Printf("PCF  subscribe to all Amfs' status change amfInfos %+v: \n", amfInfos)
+	//var err error
+	for _, amfInfo := range amfInfos {
+		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
+		if len(guamiList) == 0 {
+			continue
+		}
+		var problemDetails *models.ProblemDetails
+		problemDetails, err = consumer.AmfStatusChangeSubscribe(amfInfo)
+		if problemDetails != nil {
+			logger.InitLog.Warnf("AMF status subscribe Failed[%+v]", problemDetails)
+		} else if err != nil {
+			logger.InitLog.Warnf("AMF status subscribe Error[%+v]", err)
+		}
+	}
+
+	// TODO: subscribe NRF NFstatus
+
+	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{
+		ServiceNames: optional.NewInterface([]models.ServiceName{models.ServiceName_NUDR_DR}),
+	}
+	resp, err := consumer.SendSearchNFInstances(context.SMAF_Self().NrfUri, models.NfType_UDR, models.NfType_SMAF, param)
+	//fmt.Println("PCF  subscribe NRF NFstatus resp : ", resp)
+	for _, nfProfile := range resp.NfInstances {
+		udruri := util.SearchNFServiceUri(nfProfile, models.ServiceName_NUDR_DR, models.NfServiceStatus_REGISTERED)
+		if udruri != "" {
+			//fmt.Println("udruri : ", udruri)
+			context.SMAF_Self().SetDefaultUdrURI(udruri)
+			break
+		}
+	}
+	if err != nil {
+		initLog.Errorln(err)
+	}
+
 	//20210601 initialize http server
 	HTTPAddr := fmt.Sprintf("%s:%d", context.SMAF_Self().BindingIPv4, context.SMAF_Self().SBIPort)
 	server, err := http2_util.NewServer(HTTPAddr, util.SmafLogPath, router)

@@ -143,10 +143,11 @@ func (pcf *PCF) Start() {
 	*/
 	// 20210618 added
 	consumer.SendNFRegistration()
-	var err error
 
 	// subscribe to all Amfs' status change
 	amfInfos := consumer.SearchAvailableAMFs(context.PCF_Self().NrfUri, models.ServiceName_NAMF_COMM)
+	//fmt.Printf("PCF  subscribe to all Amfs' status change amfInfos %+v: \n", amfInfos)
+	var err error
 	for _, amfInfo := range amfInfos {
 		guamiList := util.GetNotSubscribedGuamis(amfInfo.GuamiList)
 		if len(guamiList) == 0 {
@@ -167,6 +168,7 @@ func (pcf *PCF) Start() {
 		ServiceNames: optional.NewInterface([]models.ServiceName{models.ServiceName_NUDR_DR}),
 	}
 	resp, err := consumer.SendSearchNFInstances(context.PCF_Self().NrfUri, models.NfType_UDR, models.NfType_PCF, param)
+	//fmt.Println("PCF  subscribe NRF NFstatus resp : ", resp)
 	for _, nfProfile := range resp.NfInstances {
 		udruri := util.SearchNFServiceUri(nfProfile, models.ServiceName_NUDR_DR, models.NfServiceStatus_REGISTERED)
 		if udruri != "" {
