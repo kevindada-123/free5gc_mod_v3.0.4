@@ -9,6 +9,7 @@ func SearchNFServiceUri(nfProfile models.NfProfile, serviceName models.ServiceNa
 	nfServiceStatus models.NfServiceStatus) (nfUri string) {
 	if nfProfile.NfServices != nil {
 		for _, service := range *nfProfile.NfServices {
+			//fmt.Printf("amf search service: %+v\n", service)
 			if service.ServiceName == serviceName && service.NfServiceStatus == nfServiceStatus {
 				if nfProfile.Fqdn != "" {
 					nfUri = nfProfile.Fqdn

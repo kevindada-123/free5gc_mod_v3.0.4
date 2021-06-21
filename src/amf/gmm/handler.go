@@ -830,22 +830,26 @@ func HandleInitialRegistration(ue *context.AmfUe, anType models.AccessType) erro
 		Supi: optional.NewString(ue.Supi),
 	}
 	for {
-		resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_PCF, models.NfType_AMF, &param)
+		//resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_PCF, models.NfType_AMF, &param)
+		resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_SMAF, models.NfType_AMF, &param)
 		if err != nil {
-			logger.GmmLog.Error("AMF can not select an PCF by NRF")
+			logger.GmmLog.Error("AMF can not select an PCF by NRF one")
 		} else {
 			// select the first PCF, TODO: select base on other info
 			var pcfUri string
+			//fmt.Printf("pcf search resp %+v\n", resp)
 			for _, nfProfile := range resp.NfInstances {
+				//fmt.Printf("pcf search nfProfile %+v\n", nfProfile)
 				pcfUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NPCF_AM_POLICY_CONTROL,
 					models.NfServiceStatus_REGISTERED)
 				if pcfUri != "" {
+					//fmt.Printf("pcf pcfUri: %+v\n", pcfUri)
 					ue.PcfId = nfProfile.NfInstanceId
 					break
 				}
 			}
 			if ue.PcfUri = pcfUri; ue.PcfUri == "" {
-				logger.GmmLog.Error("AMF can not select an PCF by NRF")
+				logger.GmmLog.Error("AMF can not select an PCF by NRF two")
 			} else {
 				break
 			}

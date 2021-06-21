@@ -17,6 +17,7 @@ import (
 	"free5gc/lib/openapi/models"
 	"free5gc/lib/path_util"
 	"free5gc/src/app"
+	"free5gc/src/smaf/ampolicy"
 	"free5gc/src/smaf/callback"
 	"free5gc/src/smaf/consumer"
 	"free5gc/src/smaf/context"
@@ -28,6 +29,7 @@ import (
 	"free5gc/src/smaf/pfcp"
 	"free5gc/src/smaf/pfcp/message"
 	"free5gc/src/smaf/pfcp/udp"
+	"free5gc/src/smaf/smpolicy"
 	"free5gc/src/smaf/ueauthentication"
 	"free5gc/src/smaf/util"
 )
@@ -149,6 +151,12 @@ func (smaf *SMAF) Start() {
 	//start smaf(SMF) service and network services
 	oam.AddService(router)
 	callback.AddService(router)
+	//start ausf service and network services
+	ueauthentication.AddService(router)
+	//start pcf service and network services
+	smpolicy.AddService(router)
+	ampolicy.AddService(router)
+
 	for _, serviceName := range factory.SmafConfig.Configuration.ServiceNameList {
 		switch models.ServiceName(serviceName) {
 		case models.ServiceName_NSMF_PDUSESSION:
@@ -157,8 +165,7 @@ func (smaf *SMAF) Start() {
 			eventexposure.AddService(router)
 		}
 	}
-	//start ausf service and network services
-	ueauthentication.AddService(router)
+
 	//20210601 run pfcp connection
 	udp.Run(pfcp.Dispatch)
 
@@ -169,7 +176,7 @@ func (smaf *SMAF) Start() {
 
 	time.Sleep(1000 * time.Millisecond)
 
-	//20210619 added pcf
+	//20210619 added pcf intial
 	// subscribe to all Amfs' status change
 	amfInfos := consumer.SearchAvailableAMFs(context.SMAF_Self().NrfUri, models.ServiceName_NAMF_COMM)
 	//fmt.Printf("PCF  subscribe to all Amfs' status change amfInfos %+v: \n", amfInfos)
@@ -229,7 +236,6 @@ func (smaf *SMAF) Start() {
 	if err != nil {
 		initLog.Fatalln("HTTP server setup failed:", err)
 	}
-
 }
 
 func (smaf *SMAF) Terminate() {

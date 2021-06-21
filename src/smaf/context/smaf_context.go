@@ -2,8 +2,10 @@ package context
 
 import (
 	"fmt"
+	"math"
 	"net"
 	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -144,6 +146,18 @@ type AMFStatusSubscriptionData struct {
 	AmfStatusUri string
 
 	GuamiList []models.Guami
+}
+type AppSessionData struct {
+	AppSessionId      string
+	AppSessionContext *models.AppSessionContext
+	// (compN/compN-subCompN/appId-%s) map to PccRule
+	RelatedPccRuleIds    map[string]string
+	PccRuleIdMapToCompId map[string]string
+	// EventSubscription
+	Events   map[models.AfEvent]models.AfNotifMethod
+	EventUri string
+	// related Session
+	SmPolicyData *UeSmPolicyData
 }
 
 func AllocUEIP() net.IP {
@@ -387,4 +401,97 @@ func (context *SMAFContext) SetDefaultUdrURI(uri string) {
 	context.DefaultUdrURILock.Lock()
 	defer context.DefaultUdrURILock.Unlock()
 	context.DefaultUdrURI = uri
+}
+
+// Find PcfUe which the policyId belongs to
+func (context *SMAFContext) PCFUeFindByPolicyId(PolicyId string) *PCFUeContext {
+	index := strings.LastIndex(PolicyId, "-")
+	if index == -1 {
+		return nil
+	}
+	supi := PolicyId[:index]
+	if supi != "" {
+		if value, ok := context.UePool.Load(supi); ok {
+			ueContext := value.(*PCFUeContext)
+			return ueContext
+		}
+	}
+	return nil
+}
+
+// Allocate PCF Ue with supi and add to pcf Context and returns allocated ue
+func (context *SMAFContext) NewPCFUe(Supi string) (*PCFUeContext, error) {
+	if strings.HasPrefix(Supi, "imsi-") {
+		newPCFUeContext := &PCFUeContext{}
+		newPCFUeContext.SmPolicyData = make(map[string]*UeSmPolicyData)
+		newPCFUeContext.AMPolicyData = make(map[string]*UeAMPolicyData)
+		newPCFUeContext.PolAssociationIDGenerator = 1
+		newPCFUeContext.AppSessionIDGenerator = idgenerator.NewGenerator(1, math.MaxInt64)
+		newPCFUeContext.Supi = Supi
+		context.UePool.Store(Supi, newPCFUeContext)
+		return newPCFUeContext, nil
+	} else {
+		return nil, fmt.Errorf(" add Ue context fail ")
+	}
+}
+
+// Find SMPolicy with AppSessionContext
+func ueSMPolicyFindByAppSessionContext(ue *PCFUeContext, req *models.AppSessionContextReqData) (*UeSmPolicyData, error) {
+	var policy *UeSmPolicyData
+	var err error
+
+	if req.UeIpv4 != "" {
+		policy = ue.SMPolicyFindByIdentifiersIpv4(req.UeIpv4, req.SliceInfo, req.Dnn, req.IpDomain)
+		if policy == nil {
+			err = fmt.Errorf("Can't find Ue with Ipv4[%s]", req.UeIpv4)
+		}
+	} else if req.UeIpv6 != "" {
+		policy = ue.SMPolicyFindByIdentifiersIpv6(req.UeIpv6, req.SliceInfo, req.Dnn)
+		if policy == nil {
+			err = fmt.Errorf("Can't find Ue with Ipv6 prefix[%s]", req.UeIpv6)
+		}
+	} else {
+		//TODO: find by MAC address
+		err = fmt.Errorf("Ue finding by MAC address does not support")
+	}
+	return policy, err
+}
+
+// SessionBinding from application request to get corresponding Sm policy
+func (context *SMAFContext) SessionBinding(req *models.AppSessionContextReqData) (*UeSmPolicyData, error) {
+	var selectedUE *PCFUeContext
+	var policy *UeSmPolicyData
+	var err error
+
+	if req.Supi != "" {
+		if val, exist := context.UePool.Load(req.Supi); exist {
+			selectedUE = val.(*PCFUeContext)
+		}
+	}
+
+	if req.Gpsi != "" && selectedUE == nil {
+		context.UePool.Range(func(key, value interface{}) bool {
+			ue := value.(*PCFUeContext)
+			if ue.Gpsi == req.Gpsi {
+				selectedUE = ue
+				return false
+			} else {
+				return true
+			}
+		})
+	}
+
+	if selectedUE != nil {
+		policy, err = ueSMPolicyFindByAppSessionContext(selectedUE, req)
+	} else {
+		context.UePool.Range(func(key, value interface{}) bool {
+			ue := value.(*PCFUeContext)
+			policy, err = ueSMPolicyFindByAppSessionContext(ue, req)
+			return true
+		})
+	}
+	if policy == nil && err == nil {
+		err = fmt.Errorf("No SM policy found")
+	}
+	return policy, err
 }

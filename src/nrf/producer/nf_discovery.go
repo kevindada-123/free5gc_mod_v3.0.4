@@ -2,6 +2,7 @@ package producer
 
 import (
 	"encoding/json"
+	"fmt"
 	"free5gc/lib/MongoDBLibrary"
 	"free5gc/lib/TimeDecode"
 	"free5gc/lib/http_wrapper"
@@ -74,7 +75,7 @@ func NFDiscoveryProcedure(queryParameters url.Values) (response *models.SearchRe
 	}
 
 	// Check ComplexQuery (FOR REPORT PROBLEM!)
-
+	fmt.Printf("nrf discovery queryParameters: %+v\n", queryParameters)
 	// Build Query Filter
 	var filter bson.M = buildFilter(queryParameters)
 	logger.DiscoveryLog.Traceln("Query filter: ", filter)
@@ -655,6 +656,28 @@ func buildFilter(queryParameters url.Values) bson.M {
 						},
 
 						"udrInfo.externalGroupIdentifiersRanges": bson.M{
+							"$exists": false,
+						},
+					},
+				},
+			}
+		} else if targetNfType == "SMAF" {
+			supiFilter = bson.M{
+				"$or": []bson.M{
+					{
+						"pcfInfo.supiRanges": bson.M{
+							"$elemMatch": bson.M{
+								"start": bson.M{
+									"$lte": supi,
+								},
+								"end": bson.M{
+									"$gte": supi,
+								},
+							},
+						},
+					},
+					{
+						"pcfInfo.supiRanges": bson.M{
 							"$exists": false,
 						},
 					},

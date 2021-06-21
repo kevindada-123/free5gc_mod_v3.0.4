@@ -229,7 +229,8 @@ func (smContext *SMContext) PCFSelection() error {
 	rep, res, err := SMAF_Self().
 		NFDiscoveryClient.
 		NFInstancesStoreApi.
-		SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMAF, &localVarOptionals)
+		//SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMAF, &localVarOptionals)
+		SearchNFInstances(context.TODO(), models.NfType_SMAF, models.NfType_SMAF, &localVarOptionals)
 	if err != nil {
 		return err
 	}
@@ -245,17 +246,34 @@ func (smContext *SMContext) PCFSelection() error {
 	}
 
 	// Select PCF from available PCF
+	fmt.Printf("Select PCF from available PCF :%+v\n", rep.NfInstances[0])
 
-	smContext.SelectedPCFProfile = rep.NfInstances[0]
+	//smContext.SelectedPCFProfile = rep.NfInstances[0]
 
-	// Create SMPolicyControl Client for this SM Context
-	for _, service := range *smContext.SelectedPCFProfile.NfServices {
-		if service.ServiceName == models.ServiceName_NPCF_SMPOLICYCONTROL {
-			SmPolicyControlConf := Npcf_SMPolicyControl.NewConfiguration()
-			SmPolicyControlConf.SetBasePath(service.ApiPrefix)
-			smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConf)
+	var searchpcfresult = rep.NfInstances
+	for _, nfinstnaces := range searchpcfresult {
+		for _, service := range *nfinstnaces.NfServices {
+			if service.ServiceName == models.ServiceName_NPCF_SMPOLICYCONTROL {
+				fmt.Printf("print service name :%+v\n", service.ServiceName)
+				SmPolicyControlConf := Npcf_SMPolicyControl.NewConfiguration()
+				SmPolicyControlConf.SetBasePath(service.ApiPrefix)
+				smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConf)
+				return nil
+			}
 		}
 	}
+	/*
+		// Create SMPolicyControl Client for this SM Context
+		for _, service := range *smContext.SelectedPCFProfile.NfServices {
+			fmt.Printf("print service :%+v\n", service)
+			if service.ServiceName == models.ServiceName_NPCF_SMPOLICYCONTROL {
+				fmt.Printf("print service name :%+v\n", service.ServiceName)
+				SmPolicyControlConf := Npcf_SMPolicyControl.NewConfiguration()
+				SmPolicyControlConf.SetBasePath(service.ApiPrefix)
+				smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConf)
+			}
+		}
+	*/
 
 	return nil
 }

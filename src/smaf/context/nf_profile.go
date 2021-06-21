@@ -54,7 +54,7 @@ func SetupNFProfile(config *factory.Config) {
 		})
 
 	}
-	//fmt.Println("show smaf NFServices:", NFServices)
+	fmt.Printf("show smaf NFServices: %+v\n", NFServices)
 	//set smfInfo
 	SmafInfo = &models.SmafInfo{
 		SNssaiSmfInfoList: &smafContext.SnssaiInfos,

@@ -118,15 +118,24 @@ func HandlePDUSessionSMContextCreate(request models.PostSmContextsRequest) *http
 	smPolicyData.SuppFeat = "F"
 
 	var smPolicyDecision models.SmPolicyDecision
-	if smPolicyDecisionFromPCF, _, err := smContext.SMPolicyClient.
-		DefaultApi.SmPoliciesPost(context.Background(), smPolicyData); err != nil {
+	/*
+		if smPolicyDecisionFromPCF, _, err := smContext.SMPolicyClient.
+			DefaultApi.SmPoliciesPost(context.Background(), smPolicyData); err != nil {
+			openapiError := err.(openapi.GenericOpenAPIError)
+			problemDetails := openapiError.Model().(models.ProblemDetails)
+			logger.PduSessLog.Errorln("setup sm policy association failed:", err, problemDetails)
+		} else {
+			smPolicyDecision = smPolicyDecisionFromPCF
+		}
+	*/
+	smPolicyDecisionFromPCF, _, err := smContext.SMPolicyClient.DefaultApi.SmPoliciesPost(context.Background(), smPolicyData)
+	if err != nil {
 		openapiError := err.(openapi.GenericOpenAPIError)
 		problemDetails := openapiError.Model().(models.ProblemDetails)
 		logger.PduSessLog.Errorln("setup sm policy association failed:", err, problemDetails)
 	} else {
 		smPolicyDecision = smPolicyDecisionFromPCF
 	}
-
 	if err := ApplySmPolicyFromDecision(smContext, &smPolicyDecision); err != nil {
 		logger.PduSessLog.Errorf("apply sm policy decision error: %+v", err)
 	}

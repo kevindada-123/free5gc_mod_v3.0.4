@@ -48,3 +48,32 @@ func SearchAvailableAMFs(nrfUri string, serviceName models.ServiceName) (
 	}
 	return
 }
+
+//20210620 added from  /src/pcf/nf_discovery.go
+func SendNFIntancesUDR(nrfUri, id string) string {
+	targetNfType := models.NfType_UDR
+	requestNfType := models.NfType_SMAF
+	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{
+		// 	DataSet: optional.NewInterface(models.DataSetId_SUBSCRIPTION),
+	}
+	// switch types {
+	// case NFDiscoveryToUDRParamSupi:
+	// 	localVarOptionals.Supi = optional.NewString(id)
+	// case NFDiscoveryToUDRParamExtGroupId:
+	// 	localVarOptionals.ExternalGroupIdentity = optional.NewString(id)
+	// case NFDiscoveryToUDRParamGpsi:
+	// 	localVarOptionals.Gpsi = optional.NewString(id)
+	// }
+
+	result, err := SendSearchNFInstances(nrfUri, targetNfType, requestNfType, localVarOptionals)
+	if err != nil {
+		logger.PCFConsumerlog.Error(err.Error())
+		return ""
+	}
+	for _, profile := range result.NfInstances {
+		if uri := util.SearchNFServiceUri(profile, models.ServiceName_NUDR_DR, models.NfServiceStatus_REGISTERED); uri != "" {
+			return uri
+		}
+	}
+	return ""
+}
