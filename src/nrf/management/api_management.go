@@ -38,11 +38,8 @@ func GetNrfInfo() *models.NrfInfo {
 	nrfinfo.ServedAusfInfo = getAusfInfo()
 	nrfinfo.ServedAmfInfo = getAmfInfo()
 	nrfinfo.ServedSmfInfo = getSmfInfo()
-<<<<<<< Updated upstream
-=======
 	//20210622 added
 	nrfinfo.ServedSmafInfo = getSmafInfo()
->>>>>>> Stashed changes
 	nrfinfo.ServedUpfInfo = getUpfInfo()
 	nrfinfo.ServedPcfInfo = getPcfInfo()
 	nrfinfo.ServedBsfInfo = getBsfInfo()
@@ -174,8 +171,6 @@ func getSmfInfo() map[string]models.SmfInfo {
 	return servedSmfInfo
 
 }
-<<<<<<< Updated upstream
-=======
 
 //20210526 added
 func getSmafInfo() map[string]models.SmafInfo {
@@ -202,7 +197,6 @@ func getSmafInfo() map[string]models.SmafInfo {
 	return servedSmafInfo
 
 }
->>>>>>> Stashed changes
 func getUpfInfo() map[string]models.UpfInfo {
 	var servedUpfInfo map[string]models.UpfInfo
 	servedUpfInfo = make(map[string]models.UpfInfo)
