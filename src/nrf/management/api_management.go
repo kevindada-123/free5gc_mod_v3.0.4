@@ -38,6 +38,11 @@ func GetNrfInfo() *models.NrfInfo {
 	nrfinfo.ServedAusfInfo = getAusfInfo()
 	nrfinfo.ServedAmfInfo = getAmfInfo()
 	nrfinfo.ServedSmfInfo = getSmfInfo()
+<<<<<<< Updated upstream
+=======
+	//20210622 added
+	nrfinfo.ServedSmafInfo = getSmafInfo()
+>>>>>>> Stashed changes
 	nrfinfo.ServedUpfInfo = getUpfInfo()
 	nrfinfo.ServedPcfInfo = getPcfInfo()
 	nrfinfo.ServedBsfInfo = getBsfInfo()
@@ -169,6 +174,35 @@ func getSmfInfo() map[string]models.SmfInfo {
 	return servedSmfInfo
 
 }
+<<<<<<< Updated upstream
+=======
+
+//20210526 added
+func getSmafInfo() map[string]models.SmafInfo {
+	var servedSmafInfo map[string]models.SmafInfo
+	servedSmafInfo = make(map[string]models.SmafInfo)
+	var SMAFProfile models.NfProfile
+
+	collName := "NfProfile"
+	filter := bson.M{"nfType": "SMAF"}
+
+	SMAF := MongoDBLibrary.RestfulAPIGetMany(collName, filter)
+	SMAFStruct, err := TimeDecode.Decode(SMAF, time.RFC3339)
+	if err != nil {
+		logger.ManagementLog.Error(err)
+	}
+	for i := 0; i < len(SMAFStruct); i++ {
+		err := mapstructure.Decode(SMAFStruct[i], &SMAFProfile)
+		if err != nil {
+			panic(err)
+		}
+		index := strconv.Itoa(i)
+		servedSmafInfo[index] = *SMAFProfile.SmafInfo
+	}
+	return servedSmafInfo
+
+}
+>>>>>>> Stashed changes
 func getUpfInfo() map[string]models.UpfInfo {
 	var servedUpfInfo map[string]models.UpfInfo
 	servedUpfInfo = make(map[string]models.UpfInfo)
