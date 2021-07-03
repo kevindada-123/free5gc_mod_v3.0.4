@@ -199,7 +199,7 @@ func (amf *AUMF) Exec(c *cli.Context) error {
 	initLog.Traceln("args:", c.String("aumfcfg"))
 	args := amf.FilterCli(c)
 	initLog.Traceln("filter: ", args)
-	command := exec.Command("./amf", args...)
+	command := exec.Command("./aumf", args...)
 
 	stdout, err := command.StdoutPipe()
 	if err != nil {
@@ -229,7 +229,7 @@ func (amf *AUMF) Exec(c *cli.Context) error {
 
 	go func() {
 		if err = command.Start(); err != nil {
-			initLog.Errorf("AMF Start error: %+v", err)
+			initLog.Errorf("AUMF Start error: %+v", err)
 		}
 		wg.Done()
 	}()
@@ -241,10 +241,10 @@ func (amf *AUMF) Exec(c *cli.Context) error {
 
 // Used in AMF planned removal procedure
 func (amf *AUMF) Terminate() {
-	logger.InitLog.Infof("Terminating AMF...")
+	logger.InitLog.Infof("Terminating AUMF...")
 	amfSelf := context.AUMF_Self()
 
-	// TODO: forward registered UE contexts to target AMF in the same AMF set if there is one
+	// TODO: forward registered UE contexts to target AUMF in the same AUMF set if there is one
 
 	// deregister with NRF
 	problemDetails, err := consumer.SendDeregisterNFInstance()
@@ -253,11 +253,11 @@ func (amf *AUMF) Terminate() {
 	} else if err != nil {
 		logger.InitLog.Errorf("Deregister NF instance Error[%+v]", err)
 	} else {
-		logger.InitLog.Infof("[AMF] Deregister from NRF successfully")
+		logger.InitLog.Infof("[AUMF] Deregister from NRF successfully")
 	}
 
-	// send AMF status indication to ran to notify ran that this AMF will be unavailable
-	logger.InitLog.Infof("Send AMF Status Indication to Notify RANs due to AMF terminating")
+	// send AUMF status indication to ran to notify ran that this AUMF will be unavailable
+	logger.InitLog.Infof("Send AUMF Status Indication to Notify RANs due to AUMF terminating")
 	unavailableGuamiList := ngap_message.BuildUnavailableGUAMIList(amfSelf.ServedGuamiList)
 	amfSelf.AmfRanPool.Range(func(key, value interface{}) bool {
 		ran := value.(*context.AmfRan)
@@ -268,5 +268,5 @@ func (amf *AUMF) Terminate() {
 	ngap_service.Stop()
 
 	callback.SendAmfStatusChangeNotify((string)(models.StatusChange_UNAVAILABLE), amfSelf.ServedGuamiList)
-	logger.InitLog.Infof("AMF terminated")
+	logger.InitLog.Infof("AUMF terminated")
 }

@@ -39,7 +39,7 @@ func GetNrfInfo() *models.NrfInfo {
 	nrfinfo.ServedAmfInfo = getAmfInfo()
 	nrfinfo.ServedSmfInfo = getSmfInfo()
 	//20210622 added
-	nrfinfo.ServedSmpcfInfo = getSmafInfo()
+	nrfinfo.ServedSmpcfInfo = getSmpcfInfo()
 	nrfinfo.ServedUpfInfo = getUpfInfo()
 	nrfinfo.ServedPcfInfo = getPcfInfo()
 	nrfinfo.ServedBsfInfo = getBsfInfo()
@@ -173,13 +173,13 @@ func getSmfInfo() map[string]models.SmfInfo {
 }
 
 //20210526 added
-func getSmafInfo() map[string]models.SmpcfInfo {
+func getSmpcfInfo() map[string]models.SmpcfInfo {
 	var servedSmafInfo map[string]models.SmpcfInfo
 	servedSmafInfo = make(map[string]models.SmpcfInfo)
-	var SMAFProfile models.NfProfile
+	var SMPCFProfile models.NfProfile
 
 	collName := "NfProfile"
-	filter := bson.M{"nfType": "SMAF"}
+	filter := bson.M{"nfType": "SMPCF"}
 
 	SMAF := MongoDBLibrary.RestfulAPIGetMany(collName, filter)
 	SMAFStruct, err := TimeDecode.Decode(SMAF, time.RFC3339)
@@ -187,12 +187,12 @@ func getSmafInfo() map[string]models.SmpcfInfo {
 		logger.ManagementLog.Error(err)
 	}
 	for i := 0; i < len(SMAFStruct); i++ {
-		err := mapstructure.Decode(SMAFStruct[i], &SMAFProfile)
+		err := mapstructure.Decode(SMAFStruct[i], &SMPCFProfile)
 		if err != nil {
 			panic(err)
 		}
 		index := strconv.Itoa(i)
-		servedSmafInfo[index] = *SMAFProfile.SmpcfInfo
+		servedSmafInfo[index] = *SMPCFProfile.SmpcfInfo
 	}
 	return servedSmafInfo
 

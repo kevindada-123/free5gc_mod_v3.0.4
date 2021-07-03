@@ -2,7 +2,6 @@ package producer
 
 import (
 	"encoding/json"
-	"fmt"
 	"free5gc/lib/MongoDBLibrary"
 	"free5gc/lib/TimeDecode"
 	"free5gc/lib/http_wrapper"
@@ -75,7 +74,7 @@ func NFDiscoveryProcedure(queryParameters url.Values) (response *models.SearchRe
 	}
 
 	// Check ComplexQuery (FOR REPORT PROBLEM!)
-	fmt.Printf("nrf discovery queryParameters: %+v\n", queryParameters)
+	//fmt.Printf("nrf discovery queryParameters: %+v\n", queryParameters)
 	// Build Query Filter
 	var filter bson.M = buildFilter(queryParameters)
 	logger.DiscoveryLog.Traceln("Query filter: ", filter)
