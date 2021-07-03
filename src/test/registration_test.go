@@ -14,6 +14,7 @@ import (
 	"free5gc/lib/ngap"
 	"free5gc/lib/ngap/ngapType"
 	"free5gc/lib/openapi/models"
+	"runtime"
 	"strconv"
 
 	"github.com/mohae/deepcopy"
@@ -32,16 +33,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	//20210615 added
-	"runtime"
 )
 
 const ranIpAddr string = "10.200.200.1"
 
 // Registration
 func TestRegistration(t *testing.T) {
-	PrintMemUsage()
 	var n int
 	var sendMsg []byte
 	var recvMsg = make([]byte, 2048)
@@ -221,7 +218,6 @@ func TestRegistration(t *testing.T) {
 	_, err = conn.Write(sendMsg)
 	assert.Nil(t, err)
 
-	PrintMemUsage()
 	// wait 1s
 	time.Sleep(1 * time.Second)
 
@@ -2515,7 +2511,6 @@ func TestReSynchronisation(t *testing.T) {
 	// close Connection
 	conn.Close()
 }
-
 func PrintMemUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
@@ -2564,12 +2559,12 @@ func TestDoubleRegistration(t *testing.T) {
 		var amfUeNgapId int64
 		//var supiprefix []string
 		if i == 0 {
-			supi = "imsi-2089300017400"
+			supi = "imsi-2089300017411"
 			//supiprefix := []string{"imsi-2089300017"}
 			//supi = strings.Join(supiprefix, strconv.FormatInt(400, 10))
 			amfUeNgapId = 1
 		} else {
-			supi = "imsi-2089300017401"
+			supi = "imsi-2089300017412"
 			amfUeNgapId = 2
 		}
 		ue := test.NewRanUeContext(supi, amfUeNgapId, security.AlgCiphering128NEA0, security.AlgIntegrity128NIA2)
@@ -2616,12 +2611,12 @@ func TestDoubleRegistration(t *testing.T) {
 		if i == 0 {
 			mobileIdentity5GS = nasType.MobileIdentity5GS{
 				Len:    12, // suci
-				Buffer: []uint8{0x01, 0x02, 0xf8, 0x39, 0xf0, 0xff, 0x00, 0x00, 0x00, 0x10, 0x47, 0x00},
+				Buffer: []uint8{0x01, 0x02, 0xf8, 0x39, 0xf0, 0xff, 0x00, 0x00, 0x00, 0x10, 0x47, 0x11},
 			}
 		} else {
 			mobileIdentity5GS = nasType.MobileIdentity5GS{
 				Len:    12, // suci
-				Buffer: []uint8{0x01, 0x02, 0xf8, 0x39, 0xf0, 0xff, 0x00, 0x00, 0x00, 0x10, 0x47, 0x10},
+				Buffer: []uint8{0x01, 0x02, 0xf8, 0x39, 0xf0, 0xff, 0x00, 0x00, 0x00, 0x10, 0x47, 0x21},
 			}
 		}
 		// send InitialUeMessage(Registration Request)(imsi-2089300017400)

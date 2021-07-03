@@ -39,7 +39,6 @@ type NfProfileNotificationData struct {
 	AusfInfo                         *AusfInfo                         `json:"ausfInfo,omitempty" yaml:"ausfInfo" bson:"ausfInfo" mapstructure:"AusfInfo"`
 	AmfInfo                          *AmfInfo                          `json:"amfInfo,omitempty" yaml:"amfInfo" bson:"amfInfo" mapstructure:"AmfInfo"`
 	SmfInfo                          *SmfInfo                          `json:"smfInfo,omitempty" yaml:"smfInfo" bson:"smfInfo" mapstructure:"SmfInfo"`
-	SmafInfo                         *SmafInfo                         `json:"smafInfo,omitempty" yaml:"smafInfo" bson:"smafInfo" mapstructure:"SmafInfo"`
 	UpfInfo                          *UpfInfo                          `json:"upfInfo,omitempty" yaml:"upfInfo" bson:"upfInfo" mapstructure:"UpfInfo"`
 	PcfInfo                          *PcfInfo                          `json:"pcfInfo,omitempty" yaml:"pcfInfo" bson:"pcfInfo" mapstructure:"PcfInfo"`
 	BsfInfo                          *BsfInfo                          `json:"bsfInfo,omitempty" yaml:"bsfInfo" bson:"bsfInfo" mapstructure:"BsfInfo"`

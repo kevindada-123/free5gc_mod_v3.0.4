@@ -21,6 +21,7 @@ func AmfStatusChangeSubscribe(amfInfo pcf_context.AMFStatusSubscriptionData) (
 		AmfStatusUri: fmt.Sprintf("%s/npcf-callback/v1/amfstatus", pcfSelf.GetIPv4Uri()),
 		GuamiList:    amfInfo.GuamiList,
 	}
+
 	res, httpResp, localErr :=
 		client.SubscriptionsCollectionDocumentApi.AMFStatusChangeSubscribe(context.Background(), subscriptionData)
 	if localErr == nil {

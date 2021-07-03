@@ -22,8 +22,10 @@ type context struct {
 
 type Logger struct {
 	AMF                AMF                `yaml:"AMF"`
+	AUMF               AUMF               `yaml:"AUMF"`
 	UDM                UDM                `yaml:"UDM"`
 	SMF                SMF                `yaml:"SMF"`
+	SMPCF              SMPCF              `yaml:"SMPCF"`
 	NAS                NAS                `yaml:"NAS"`
 	FSM                FSM                `yaml:"FSM"`
 	NGAP               NGAP               `yaml:"NGAP"`
@@ -47,6 +49,10 @@ type AMF struct {
 	DebugLevel   string `yaml:"debugLevel"`
 	ReportCaller bool   `yaml:"ReportCaller"`
 }
+type AUMF struct {
+	DebugLevel   string `yaml:"debugLevel"`
+	ReportCaller bool   `yaml:"ReportCaller"`
+}
 
 type UDM struct {
 	DebugLevel   string `yaml:"debugLevel"`
@@ -54,6 +60,10 @@ type UDM struct {
 }
 
 type SMF struct {
+	DebugLevel   string `yaml:"debugLevel"`
+	ReportCaller bool   `yaml:"ReportCaller"`
+}
+type SMPCF struct {
 	DebugLevel   string `yaml:"debugLevel"`
 	ReportCaller bool   `yaml:"ReportCaller"`
 }

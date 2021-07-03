@@ -8,17 +8,20 @@ import (
 	"free5gc/lib/nas/security"
 	"free5gc/lib/ngap"
 	"free5gc/lib/path_util"
-	amf_service "free5gc/src/amf/service"
-	"free5gc/src/app"
 
-	//ausf_service "free5gc/src/ausf/service"
+	//amf_service "free5gc/src/amf/service"
+
+	"free5gc/src/app"
+	aumf_service "free5gc/src/aumf/service"
+	ausf_service "free5gc/src/ausf/service"
 	nrf_service "free5gc/src/nrf/service"
 	nssf_service "free5gc/src/nssf/service"
 
 	//pcf_service "free5gc/src/pcf/service"
-	smaf_service "free5gc/src/smaf/service"
 
 	//smf_service "free5gc/src/smf/service"
+
+	smpcf_service "free5gc/src/smpcf/service"
 	"free5gc/src/test"
 	udm_service "free5gc/src/udm/service"
 	udr_service "free5gc/src/udr/service"
@@ -34,15 +37,15 @@ import (
 
 var NFs = []app.NetworkFunction{
 	&nrf_service.NRF{},
-	&amf_service.AMF{},
+	//&amf_service.AMF{},
+	&aumf_service.AUMF{},
 	//&smf_service.SMF{},
-	//20210528
+	&smpcf_service.SMPCF{},
 	&udr_service.UDR{},
-	&smaf_service.SMAF{},
 	//&pcf_service.PCF{},
 	&udm_service.UDM{},
 	&nssf_service.NSSF{},
-	//&ausf_service.AUSF{},
+	&ausf_service.AUSF{},
 	//&n3iwf_service.N3IWF{},
 }
 
@@ -57,20 +60,23 @@ func init() {
 
 	if init {
 		app.AppInitializeWillInitialize("")
-		//flagSet := flag.NewFlagSet("free5gc", 0)
-		//flagSet.String("smfcfg", "", "SMF Config Path")
-		//cli := cli.NewContext(nil, flagSet, nil)
-		//err := cli.Set("smfcfg", path_util.Gofree5gcPath("free5gc/config/test/smfcfg.test.conf"))
-		//if err != nil {
-		//	log.Fatal("SMF test config error")
-		//	return
-		//}
+		/*
+			flagSet := flag.NewFlagSet("free5gc", 0)
+			flagSet.String("smfcfg", "", "SMF Config Path")
+			cli := cli.NewContext(nil, flagSet, nil)
+			err := cli.Set("smfcfg", path_util.Gofree5gcPath("free5gc/config/test/smfcfg.test.conf"))
+			if err != nil {
+				log.Fatal("SMF test config error")
+				return
+			}
+		*/
+
 		flagSet := flag.NewFlagSet("free5gc", 0)
-		flagSet.String("smafcfg", "", "SMAF Config Path")
+		flagSet.String("smpcfcfg", "", "SMPCF Config Path")
 		cli := cli.NewContext(nil, flagSet, nil)
-		err := cli.Set("smafcfg", path_util.Gofree5gcPath("free5gc/config/test/smafcfg.test.conf"))
+		err := cli.Set("smpcfcfg", path_util.Gofree5gcPath("free5gc/config/test/smpcfcfg.test.conf"))
 		if err != nil {
-			log.Fatal("SMAF test config error")
+			log.Fatal("SMPCF test config error")
 			return
 		}
 

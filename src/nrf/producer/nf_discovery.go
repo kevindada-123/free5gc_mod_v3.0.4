@@ -400,7 +400,7 @@ func buildFilter(queryParameters url.Values) bson.M {
 					},
 				},
 			}
-		} else if targetNfType == "SMAF" { //20210619 added
+		} else if targetNfType == "SMPCF" { //20210619 added
 			dnnFilter = bson.M{
 				"smfInfo.sNssaiSmfInfoList": bson.M{
 					"$elemMatch": bson.M{
@@ -661,7 +661,7 @@ func buildFilter(queryParameters url.Values) bson.M {
 					},
 				},
 			}
-		} else if targetNfType == "SMAF" {
+		} else if targetNfType == "SMPCF" {
 			supiFilter = bson.M{
 				"$or": []bson.M{
 					{

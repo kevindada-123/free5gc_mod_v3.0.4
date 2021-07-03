@@ -308,26 +308,26 @@ func nnrfNFManagementOption(nf *models.NfProfile, nfprofile models.NfProfile) {
 		nf.SmfInfo = &a
 	}
 	//smafInfo 20210608 added
-	if nfprofile.SmafInfo != nil {
+	if nfprofile.SmpcfInfo != nil {
 
-		var a models.SmafInfo
+		var a models.SmpcfInfo
 
-		if nfprofile.SmafInfo.SNssaiSmfInfoList != nil {
-			a.SNssaiSmfInfoList = nfprofile.SmafInfo.SNssaiSmfInfoList
+		if nfprofile.SmpcfInfo.SNssaiSmfInfoList != nil {
+			a.SNssaiSmfInfoList = nfprofile.SmpcfInfo.SNssaiSmfInfoList
 		}
-		if nfprofile.SmafInfo.TaiList != nil {
-			a.TaiList = nfprofile.SmafInfo.TaiList
+		if nfprofile.SmpcfInfo.TaiList != nil {
+			a.TaiList = nfprofile.SmpcfInfo.TaiList
 		}
-		if nfprofile.SmafInfo.TaiRangeList != nil {
-			a.TaiRangeList = nfprofile.SmafInfo.TaiRangeList
+		if nfprofile.SmpcfInfo.TaiRangeList != nil {
+			a.TaiRangeList = nfprofile.SmpcfInfo.TaiRangeList
 		}
-		if nfprofile.SmafInfo.PgwFqdn != "" {
-			a.PgwFqdn = nfprofile.SmafInfo.PgwFqdn
+		if nfprofile.SmpcfInfo.PgwFqdn != "" {
+			a.PgwFqdn = nfprofile.SmpcfInfo.PgwFqdn
 		}
-		if nfprofile.SmafInfo.AccessType != nil {
-			a.AccessType = nfprofile.SmafInfo.AccessType
+		if nfprofile.SmpcfInfo.AccessType != nil {
+			a.AccessType = nfprofile.SmpcfInfo.AccessType
 		}
-		nf.SmafInfo = &a
+		nf.SmpcfInfo = &a
 	}
 	//upfInfo
 	if nfprofile.UpfInfo != nil {

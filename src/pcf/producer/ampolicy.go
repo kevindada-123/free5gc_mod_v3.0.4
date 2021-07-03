@@ -205,9 +205,7 @@ func PostPoliciesProcedure(polAssoId string,
 	var response models.PolicyAssociation
 	pcfSelf := pcf_context.PCF_Self()
 	var ue *pcf_context.UeContext
-	fmt.Printf("in func PostPoliciesProcedure \n")
 	if val, ok := pcfSelf.UePool.Load(policyAssociationRequest.Supi); ok {
-		fmt.Printf("PostPoliciesProcedure : %+v\n", val)
 		ue = val.(*pcf_context.UeContext)
 	}
 	if ue == nil {
@@ -217,7 +215,6 @@ func PostPoliciesProcedure(polAssoId string,
 			logger.AMpolicylog.Errorln(err.Error())
 			return nil, "", &problemDetail
 		} else {
-			fmt.Printf("newUe : %+v\n", newUe)
 			ue = newUe
 		}
 	}

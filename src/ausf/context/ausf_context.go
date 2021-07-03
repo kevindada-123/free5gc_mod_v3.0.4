@@ -1,17 +1,11 @@
 package context
 
 import (
-	"fmt"
-	"os"
 	"regexp"
-	"strconv"
 	"sync"
 
 	"free5gc/lib/openapi/models"
-	"free5gc/src/ausf/factory"
 	"free5gc/src/ausf/logger"
-
-	"github.com/google/uuid"
 )
 
 type AUSFContext struct {
@@ -71,89 +65,15 @@ const (
 
 var ausfContext AUSFContext
 
-//20210601 edited
-func InitAusfContext() {
-	snRegex, err := regexp.Compile("5G:mnc[0-9]{3}[.]mcc[0-9]{3}[.]3gppnetwork[.]org")
-	if err != nil {
+func Init() {
+	if snRegex, err := regexp.Compile("5G:mnc[0-9]{3}[.]mcc[0-9]{3}[.]3gppnetwork[.]org"); err != nil {
 		logger.ContextLog.Warnf("SN compile error: %+v", err)
 	} else {
 		ausfContext.snRegex = snRegex
 	}
-	config := factory.AusfConfig
-	logger.InitLog.Infof("ausfconfig Info: Version[%s] Description[%s]\n", config.Info.Version, config.Info.Description)
-
-	configuration := config.Configuration
-	sbi := configuration.Sbi
-
-	ausfContext.NfId = uuid.New().String()
-	ausfContext.GroupID = configuration.GroupId
-	ausfContext.NrfUri = configuration.NrfUri
-	ausfContext.UriScheme = models.UriScheme(configuration.Sbi.Scheme) // default uri scheme
-	ausfContext.RegisterIPv4 = "127.0.0.1"                             // default localhost
-	ausfContext.SBIPort = 29509                                        // default port
-	if sbi != nil {
-		if sbi.RegisterIPv4 != "" {
-			ausfContext.RegisterIPv4 = sbi.RegisterIPv4
-		}
-		if sbi.Port != 0 {
-			ausfContext.SBIPort = sbi.Port
-		}
-
-		if sbi.Scheme == "https" {
-			ausfContext.UriScheme = models.UriScheme_HTTPS
-		} else {
-			ausfContext.UriScheme = models.UriScheme_HTTP
-		}
-
-		ausfContext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
-		if ausfContext.BindingIPv4 != "" {
-			logger.InitLog.Info("Parsing ServerIPv4 address from ENV Variable.")
-		} else {
-			ausfContext.BindingIPv4 = sbi.BindingIPv4
-			if ausfContext.BindingIPv4 == "" {
-				logger.InitLog.Warn("Error parsing ServerIPv4 address as string. Using the 0.0.0.0 address as default.")
-				ausfContext.BindingIPv4 = "0.0.0.0"
-			}
-		}
-	}
-
-	ausfContext.Url = string(ausfContext.UriScheme) + "://" + ausfContext.RegisterIPv4 + ":" + strconv.Itoa(ausfContext.SBIPort)
-	ausfContext.PlmnList = append(ausfContext.PlmnList, configuration.PlmnSupportList...)
-
-	// context.NfService
-	ausfContext.NfService = make(map[models.ServiceName]models.NfService)
-	AddNfServices(&ausfContext.NfService, &config, &ausfContext)
-	fmt.Println("ausf context = ", &ausfContext)
+	InitAusfContext(&ausfContext)
 }
 
-//20210601 add
-func AddNfServices(serviceMap *map[models.ServiceName]models.NfService, config *factory.Config, context *AUSFContext) {
-	var nfService models.NfService
-	var ipEndPoints []models.IpEndPoint
-	var nfServiceVersions []models.NfServiceVersion
-	services := *serviceMap
-
-	// nausf-auth
-	nfService.ServiceInstanceId = context.NfId
-	nfService.ServiceName = models.ServiceName_NAUSF_AUTH
-
-	var ipEndPoint models.IpEndPoint
-	ipEndPoint.Ipv4Address = context.RegisterIPv4
-	ipEndPoint.Port = int32(context.SBIPort)
-	ipEndPoints = append(ipEndPoints, ipEndPoint)
-
-	var nfServiceVersion models.NfServiceVersion
-	nfServiceVersion.ApiFullVersion = config.Info.Version
-	nfServiceVersion.ApiVersionInUri = "v1"
-	nfServiceVersions = append(nfServiceVersions, nfServiceVersion)
-
-	nfService.Scheme = context.UriScheme
-	nfService.NfServiceStatus = models.NfServiceStatus_REGISTERED
-
-	nfService.IpEndPoints = &ipEndPoints
-	nfService.Versions = &nfServiceVersions
-	services[models.ServiceName_NAUSF_AUTH] = nfService
-}
 func NewAusfUeContext(identifier string) (ausfUeContext *AusfUeContext) {
 	ausfUeContext = new(AusfUeContext)
 	ausfUeContext.Supi = identifier // supi
@@ -202,10 +122,10 @@ func IsServingNetworkAuthorized(lookup string) bool {
 	}
 }
 
-func AUSF_Self() *AUSFContext {
+func GetSelf() *AUSFContext {
 	return &ausfContext
 }
 
-func (a *AUSFContext) AUSF_SelfID() string {
+func (a *AUSFContext) GetSelfID() string {
 	return a.NfId
 }

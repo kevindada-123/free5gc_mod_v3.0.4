@@ -39,7 +39,7 @@ func GetNrfInfo() *models.NrfInfo {
 	nrfinfo.ServedAmfInfo = getAmfInfo()
 	nrfinfo.ServedSmfInfo = getSmfInfo()
 	//20210622 added
-	nrfinfo.ServedSmafInfo = getSmafInfo()
+	nrfinfo.ServedSmpcfInfo = getSmafInfo()
 	nrfinfo.ServedUpfInfo = getUpfInfo()
 	nrfinfo.ServedPcfInfo = getPcfInfo()
 	nrfinfo.ServedBsfInfo = getBsfInfo()
@@ -173,9 +173,9 @@ func getSmfInfo() map[string]models.SmfInfo {
 }
 
 //20210526 added
-func getSmafInfo() map[string]models.SmafInfo {
-	var servedSmafInfo map[string]models.SmafInfo
-	servedSmafInfo = make(map[string]models.SmafInfo)
+func getSmafInfo() map[string]models.SmpcfInfo {
+	var servedSmafInfo map[string]models.SmpcfInfo
+	servedSmafInfo = make(map[string]models.SmpcfInfo)
 	var SMAFProfile models.NfProfile
 
 	collName := "NfProfile"
@@ -192,7 +192,7 @@ func getSmafInfo() map[string]models.SmafInfo {
 			panic(err)
 		}
 		index := strconv.Itoa(i)
-		servedSmafInfo[index] = *SMAFProfile.SmafInfo
+		servedSmafInfo[index] = *SMAFProfile.SmpcfInfo
 	}
 	return servedSmafInfo
 
