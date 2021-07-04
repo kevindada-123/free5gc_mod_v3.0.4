@@ -35,7 +35,7 @@ func CreateAMFEventSubscriptionProcedure(createEventSubscription models.AmfCreat
 
 	createdEventSubscription := &models.AmfCreatedEventSubscription{}
 	subscription := createEventSubscription.Subscription
-	contextEventSubscription := &context.AMFContextEventSubscription{}
+	contextEventSubscription := &context.AUMFContextEventSubscription{}
 	contextEventSubscription.EventSubscription = *subscription
 	var isImmediate bool
 	var immediateFlags []bool

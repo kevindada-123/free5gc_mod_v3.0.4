@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func BuildNFInstance(context *amf_context.AMFContext) (profile models.NfProfile, err error) {
+func BuildNFInstance(context *amf_context.AUMFContext) (profile models.NfProfile, err error) {
 	profile.NfInstanceId = context.NfId
 	profile.NfType = models.NfType_AMF
 	profile.NfStatus = models.NfStatus_REGISTERED

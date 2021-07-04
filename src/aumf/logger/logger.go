@@ -30,6 +30,12 @@ var ConsumerLog *logrus.Entry
 var EeLog *logrus.Entry
 var GinLog *logrus.Entry
 
+//20210602 add ausf log entry
+var UeAuthPostLog *logrus.Entry
+var Auth5gAkaComfirmLog *logrus.Entry
+var EapAuthComfirmLog *logrus.Entry
+var AusfHandlerLog *logrus.Entry
+
 func init() {
 	log = logrus.New()
 	log.SetReportCaller(false)
@@ -69,6 +75,11 @@ func init() {
 	ConsumerLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "Consumer"})
 	EeLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "EventExposure"})
 	GinLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "GIN"})
+	//20210704 add ausf log format
+	UeAuthPostLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "UeAuthPost"})
+	Auth5gAkaComfirmLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "5gAkaAuth"})
+	EapAuthComfirmLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "EapAkaAuth"})
+	AusfHandlerLog = log.WithFields(logrus.Fields{"component": "AUMF", "category": "AusfHandler"})
 }
 
 func SetLogLevel(level logrus.Level) {

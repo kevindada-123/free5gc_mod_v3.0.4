@@ -32,6 +32,7 @@ import (
 	ngap_service "free5gc/src/aumf/ngap/service"
 	"free5gc/src/aumf/oam"
 	"free5gc/src/aumf/producer/callback"
+	"free5gc/src/aumf/ueauthentication"
 	"free5gc/src/aumf/util"
 )
 
@@ -98,8 +99,8 @@ func (*AUMF) Initialize(c *cli.Context) {
 
 }
 
-func (amf *AUMF) FilterCli(c *cli.Context) (args []string) {
-	for _, flag := range amf.GetCliCmd() {
+func (aumf *AUMF) FilterCli(c *cli.Context) (args []string) {
+	for _, flag := range aumf.GetCliCmd() {
 		name := flag.GetName()
 		value := fmt.Sprint(c.Generic(name))
 		if value == "" {
@@ -112,7 +113,7 @@ func (amf *AUMF) FilterCli(c *cli.Context) (args []string) {
 }
 
 func (amf *AUMF) Start() {
-	initLog.Infoln("Server started")
+	initLog.Infoln("AUMF Server started")
 
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
 	router.Use(cors.New(cors.Config{
@@ -127,6 +128,8 @@ func (amf *AUMF) Start() {
 
 	httpcallback.AddService(router)
 	oam.AddService(router)
+	//start ausf service and network services
+	ueauthentication.AddService(router)
 	for _, serviceName := range factory.AmfConfig.Configuration.ServiceNameList {
 		switch models.ServiceName(serviceName) {
 		case models.ServiceName_NAMF_COMM:
@@ -140,25 +143,25 @@ func (amf *AUMF) Start() {
 		}
 	}
 
-	self := context.AUMF_Self()
-	util.InitAmfContext(self)
+	aumf_self := context.AUMF_Self()
+	util.InitAmfContext(aumf_self)
 
-	addr := fmt.Sprintf("%s:%d", self.BindingIPv4, self.SBIPort)
+	addr := fmt.Sprintf("%s:%d", aumf_self.BindingIPv4, aumf_self.SBIPort)
 
-	ngap_service.Run(self.NgapIpList, 38412, ngap.Dispatch)
+	ngap_service.Run(aumf_self.NgapIpList, 38412, ngap.Dispatch)
 
 	// Register to NRF
 	var profile models.NfProfile
-	if profileTmp, err := consumer.BuildNFInstance(self); err != nil {
+	if profileTmp, err := consumer.BuildNFInstance(aumf_self); err != nil {
 		initLog.Error("Build AUMF Profile Error")
 	} else {
 		profile = profileTmp
 	}
 
-	if _, nfId, err := consumer.SendRegisterNFInstance(self.NrfUri, self.NfId, profile); err != nil {
+	if _, nfId, err := consumer.SendRegisterNFInstance(aumf_self.NrfUri, aumf_self.NfId, profile); err != nil {
 		initLog.Warnf("Send Register NF Instance failed: %+v", err)
 	} else {
-		self.NfId = nfId
+		aumf_self.NfId = nfId
 	}
 
 	signalChannel := make(chan os.Signal, 1)

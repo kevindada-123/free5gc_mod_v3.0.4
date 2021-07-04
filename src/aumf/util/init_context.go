@@ -11,72 +11,78 @@ import (
 	"free5gc/src/aumf/context"
 	"free5gc/src/aumf/factory"
 	"free5gc/src/aumf/logger"
+
+	"strconv"
 )
 
-func InitAmfContext(context *context.AMFContext) {
+func InitAmfContext(aumfcontext *context.AUMFContext) {
 	config := factory.AmfConfig
 	logger.UtilLog.Infof("aumfconfig Info: Version[%s] Description[%s]", config.Info.Version, config.Info.Description)
 	configuration := config.Configuration
-	context.NfId = uuid.New().String()
+	aumfcontext.NfId = uuid.New().String()
 	if configuration.AmfName != "" {
-		context.Name = configuration.AmfName
+		aumfcontext.Name = configuration.AmfName
 	}
 	if configuration.NgapIpList != nil {
-		context.NgapIpList = configuration.NgapIpList
+		aumfcontext.NgapIpList = configuration.NgapIpList
 	} else {
-		context.NgapIpList = []string{"127.0.0.1"} // default localhost
+		aumfcontext.NgapIpList = []string{"127.0.0.1"} // default localhost
 	}
 	sbi := configuration.Sbi
 	if sbi.Scheme != "" {
-		context.UriScheme = models.UriScheme(sbi.Scheme)
+		aumfcontext.UriScheme = models.UriScheme(sbi.Scheme)
 	} else {
 		logger.UtilLog.Warnln("SBI Scheme has not been set. Using http as default")
-		context.UriScheme = "http"
+		aumfcontext.UriScheme = "http"
 	}
-	context.RegisterIPv4 = "127.0.0.1" // default localhost
-	context.SBIPort = 29518            // default port
+	aumfcontext.RegisterIPv4 = "127.0.0.1" // default localhost
+	aumfcontext.SBIPort = 29518            // default port
 	if sbi != nil {
 		if sbi.RegisterIPv4 != "" {
-			context.RegisterIPv4 = sbi.RegisterIPv4
+			aumfcontext.RegisterIPv4 = sbi.RegisterIPv4
 		}
 		if sbi.Port != 0 {
-			context.SBIPort = sbi.Port
+			aumfcontext.SBIPort = sbi.Port
 		}
-		context.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
-		if context.BindingIPv4 != "" {
+		aumfcontext.BindingIPv4 = os.Getenv(sbi.BindingIPv4)
+		if aumfcontext.BindingIPv4 != "" {
 			logger.UtilLog.Info("Parsing ServerIPv4 address from ENV Variable.")
 		} else {
-			context.BindingIPv4 = sbi.BindingIPv4
-			if context.BindingIPv4 == "" {
+			aumfcontext.BindingIPv4 = sbi.BindingIPv4
+			if aumfcontext.BindingIPv4 == "" {
 				logger.UtilLog.Warn("Error parsing ServerIPv4 address from string. Using the 0.0.0.0 as default.")
-				context.BindingIPv4 = "0.0.0.0"
+				aumfcontext.BindingIPv4 = "0.0.0.0"
 			}
 		}
 	}
+	//20210704 added ausf context initialize
+	aumfcontext.Url = string(aumfcontext.UriScheme) + "://" + aumfcontext.RegisterIPv4 + ":" + strconv.Itoa(aumfcontext.SBIPort)
+	//aumfcontext.PlmnList = append(aumfcontext.PlmnList, configuration.PlmnSupportList...)
+
 	serviceNameList := configuration.ServiceNameList
-	context.InitNFService(serviceNameList, config.Info.Version)
-	context.ServedGuamiList = configuration.ServedGumaiList
-	context.SupportTaiLists = configuration.SupportTAIList
-	for i := range context.SupportTaiLists {
-		context.SupportTaiLists[i].Tac = TACConfigToModels(context.SupportTaiLists[i].Tac)
+	aumfcontext.InitNFService(serviceNameList, config.Info.Version)
+	aumfcontext.ServedGuamiList = configuration.ServedGumaiList
+	aumfcontext.SupportTaiLists = configuration.SupportTAIList
+	for i := range aumfcontext.SupportTaiLists {
+		aumfcontext.SupportTaiLists[i].Tac = TACConfigToModels(aumfcontext.SupportTaiLists[i].Tac)
 	}
-	context.PlmnSupportList = configuration.PlmnSupportList
-	context.SupportDnnLists = configuration.SupportDnnList
+	aumfcontext.PlmnSupportList = configuration.PlmnSupportList
+	aumfcontext.SupportDnnLists = configuration.SupportDnnList
 	if configuration.NrfUri != "" {
-		context.NrfUri = configuration.NrfUri
+		aumfcontext.NrfUri = configuration.NrfUri
 	} else {
 		logger.UtilLog.Warn("NRF Uri is empty! Using localhost as NRF IPv4 address.")
-		context.NrfUri = fmt.Sprintf("%s://%s:%d", context.UriScheme, "127.0.0.1", 29510)
+		aumfcontext.NrfUri = fmt.Sprintf("%s://%s:%d", aumfcontext.UriScheme, "127.0.0.1", 29510)
 	}
 	security := configuration.Security
 	if security != nil {
-		context.SecurityAlgorithm.IntegrityOrder = getIntAlgOrder(security.IntegrityOrder)
-		context.SecurityAlgorithm.CipheringOrder = getEncAlgOrder(security.CipheringOrder)
+		aumfcontext.SecurityAlgorithm.IntegrityOrder = getIntAlgOrder(security.IntegrityOrder)
+		aumfcontext.SecurityAlgorithm.CipheringOrder = getEncAlgOrder(security.CipheringOrder)
 	}
-	context.NetworkName = configuration.NetworkName
-	context.T3502Value = configuration.T3502
-	context.T3512Value = configuration.T3512
-	context.Non3gppDeregistrationTimerValue = configuration.Non3gppDeregistrationTimer
+	aumfcontext.NetworkName = configuration.NetworkName
+	aumfcontext.T3502Value = configuration.T3502
+	aumfcontext.T3512Value = configuration.T3512
+	aumfcontext.Non3gppDeregistrationTimerValue = configuration.Non3gppDeregistrationTimer
 }
 
 func getIntAlgOrder(integrityOrder []string) (intOrder []uint8) {

@@ -36,9 +36,11 @@ func GetNrfInfo() *models.NrfInfo {
 	nrfinfo.ServedUdrInfo = getUdrInfo()
 	nrfinfo.ServedUdmInfo = getUdmInfo()
 	nrfinfo.ServedAusfInfo = getAusfInfo()
+	//20210704 added
+	nrfinfo.ServedAumfInfo = getAumfInfo()
 	nrfinfo.ServedAmfInfo = getAmfInfo()
 	nrfinfo.ServedSmfInfo = getSmfInfo()
-	//20210622 added
+	//20210702 added
 	nrfinfo.ServedSmpcfInfo = getSmpcfInfo()
 	nrfinfo.ServedUpfInfo = getUpfInfo()
 	nrfinfo.ServedPcfInfo = getPcfInfo()
@@ -122,7 +124,30 @@ func getAusfInfo() map[string]models.AusfInfo {
 	return servedAusfInfo
 
 }
+func getAumfInfo() map[string]models.AumfInfo {
+	var servedAusfInfo map[string]models.AumfInfo
+	servedAusfInfo = make(map[string]models.AumfInfo)
+	var AUMFProfile models.NfProfile
 
+	collName := "NfProfile"
+	filter := bson.M{"nfType": "AUMF"}
+
+	AUMF := MongoDBLibrary.RestfulAPIGetMany(collName, filter)
+	AUMFStruct, err := TimeDecode.Decode(AUMF, time.RFC3339)
+	if err != nil {
+		logger.ManagementLog.Error(err)
+	}
+	for i := 0; i < len(AUMFStruct); i++ {
+		err := mapstructure.Decode(AUMFStruct[i], &AUMFProfile)
+		if err != nil {
+			panic(err)
+		}
+		index := strconv.Itoa(i)
+		servedAusfInfo[index] = *AUMFProfile.AumfInfo
+	}
+	return servedAusfInfo
+
+}
 func getAmfInfo() map[string]models.AmfInfo {
 	var servedAmfinfo map[string]models.AmfInfo
 	servedAmfinfo = make(map[string]models.AmfInfo)
