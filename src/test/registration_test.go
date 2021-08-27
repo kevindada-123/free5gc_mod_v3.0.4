@@ -2784,7 +2784,7 @@ func TestDoubleRegistration(t *testing.T) {
 }
 func TestMultiRegistration(t *testing.T) {
 	var n int
-	UEnumber := 4
+	UEnumber := 10
 	var sendMsg []byte
 	var recvMsg = make([]byte, 2048)
 
@@ -2812,6 +2812,7 @@ func TestMultiRegistration(t *testing.T) {
 
 	// batch registration and establish Pdu Sessions
 	for i := 0; i < UEnumber; i++ {
+		registrationStart := time.Now()
 		// New UE
 		// ue := test.NewRanUeContext("imsi-2089300007487", 1, security.AlgCiphering128NEA2, security.AlgIntegrity128NIA2)
 		//supi := test.NextSupi()
@@ -2948,7 +2949,10 @@ func TestMultiRegistration(t *testing.T) {
 		_, err = conn.Write(sendMsg)
 		assert.Nil(t, err)
 
+		fmt.Printf("the %+v time of registration:%+v\n", i+1, time.Since(registrationStart))
+
 		time.Sleep(100 * time.Millisecond)
+		PDUSesstionEstablishmentStart := time.Now()
 		// send GetPduSessionEstablishmentRequest Msg
 		sNssai := models.Snssai{
 			Sst: 1,
@@ -2976,7 +2980,7 @@ func TestMultiRegistration(t *testing.T) {
 		assert.Nil(t, err)
 		_, err = conn.Write(sendMsg)
 		assert.Nil(t, err)
-
+		fmt.Printf("the %+v time of PDUSesstionEstablishment:%+v\n", i+1, time.Since(PDUSesstionEstablishmentStart))
 		// wait 1s
 		time.Sleep(1 * time.Second)
 
@@ -3028,4 +3032,5 @@ func TestMultiRegistration(t *testing.T) {
 	}
 	fmt.Printf("the number of UE:%+v\n", UEnumber)
 	_ = conn.Close()
+
 }
