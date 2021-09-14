@@ -87,8 +87,8 @@ func HandlePDUSessionSMContextCreate(request models.PostSmContextsRequest) *http
 	establishmentRequest := m.PDUSessionEstablishmentRequest
 	smContext.HandlePDUSessionEstablishmentRequest(establishmentRequest)
 
-	logger.PduSessLog.Infof("PCF Selection for SMContext SUPI[%s] PDUSessionID[%d]\n",
-		smContext.Supi, smContext.PDUSessionID)
+	//logger.PduSessLog.Infof("PCF Selection for SMContext SUPI[%s] PDUSessionID[%d]\n",
+	//	smContext.Supi, smContext.PDUSessionID)
 	if err := smContext.PCFSelection(); err != nil {
 		logger.PduSessLog.Errorln("pcf selection error:", err)
 	}
