@@ -1,19 +1,15 @@
 package context
 
 import (
-	"context"
 	"fmt"
 	"free5gc/lib/nas/nasConvert"
 	"free5gc/lib/nas/nasMessage"
-	"free5gc/lib/openapi"
 	"free5gc/lib/openapi/Namf_Communication"
-	"free5gc/lib/openapi/Nnrf_NFDiscovery"
 	"free5gc/lib/openapi/Npcf_SMPolicyControl"
 	"free5gc/lib/openapi/models"
 	"free5gc/lib/pfcp/pfcpType"
 	"free5gc/src/smpcf/logger"
 	"net"
-	"net/http"
 	"sync"
 	"sync/atomic"
 
@@ -222,46 +218,52 @@ func (smContext *SMContext) PDUAddressToNAS() (addr [12]byte, addrLen uint8) {
 
 // PCFSelection will select PCF for this SM Context
 func (smContext *SMContext) PCFSelection() error {
+	/*
+		// Send NFDiscovery for find PCF
+		localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
 
-	// Send NFDiscovery for find PCF
-	localVarOptionals := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
-
-	rep, res, err := SMPCF_Self().
-		NFDiscoveryClient.
-		NFInstancesStoreApi.
-		//SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMPCF, &localVarOptionals)
-		SearchNFInstances(context.TODO(), models.NfType_SMPCF, models.NfType_SMPCF, &localVarOptionals)
-	if err != nil {
-		return err
-	}
-
-	if res != nil {
-		if status := res.StatusCode; status != http.StatusOK {
-			apiError := err.(openapi.GenericOpenAPIError)
-			problemDetails := apiError.Model().(models.ProblemDetails)
-
-			logger.SMPCFContextLog.Warningf("NFDiscovery PCF return status: %d\n", status)
-			logger.SMPCFContextLog.Warningf("Detail: %v\n", problemDetails.Title)
+		rep, res, err := SMPCF_Self().
+			NFDiscoveryClient.
+			NFInstancesStoreApi.
+			//SearchNFInstances(context.TODO(), models.NfType_PCF, models.NfType_SMPCF, &localVarOptionals)
+			SearchNFInstances(context.TODO(), models.NfType_SMPCF, models.NfType_SMPCF, &localVarOptionals)
+		if err != nil {
+			return err
 		}
-	}
 
-	// Select PCF from available PCF
-	//fmt.Printf("Select PCF from available PCF :%+v\n", rep.NfInstances[0])
+		if res != nil {
+			if status := res.StatusCode; status != http.StatusOK {
+				apiError := err.(openapi.GenericOpenAPIError)
+				problemDetails := apiError.Model().(models.ProblemDetails)
 
-	//smContext.SelectedPCFProfile = rep.NfInstances[0]
-
-	var searchpcfresult = rep.NfInstances
-	for _, nfinstnaces := range searchpcfresult {
-		for _, service := range *nfinstnaces.NfServices {
-			if service.ServiceName == models.ServiceName_NPCF_SMPOLICYCONTROL {
-				fmt.Printf("print service name :%+v\n", service.ServiceName)
-				SmPolicyControlConf := Npcf_SMPolicyControl.NewConfiguration()
-				SmPolicyControlConf.SetBasePath(service.ApiPrefix)
-				smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConf)
-				return nil
+				logger.SMPCFContextLog.Warningf("NFDiscovery PCF return status: %d\n", status)
+				logger.SMPCFContextLog.Warningf("Detail: %v\n", problemDetails.Title)
 			}
 		}
-	}
+
+		// Select PCF from available PCF
+		//fmt.Printf("Select PCF from available PCF :%+v\n", rep.NfInstances[0])
+
+		//smContext.SelectedPCFProfile = rep.NfInstances[0]
+
+		var searchpcfresult = rep.NfInstances
+		for _, nfinstnaces := range searchpcfresult {
+			for _, service := range *nfinstnaces.NfServices {
+				if service.ServiceName == models.ServiceName_NPCF_SMPOLICYCONTROL {
+					//fmt.Printf("print service name :%+v\n", service.ServiceName)
+					SmPolicyControlConf := Npcf_SMPolicyControl.NewConfiguration()
+					SmPolicyControlConf.SetBasePath(service.ApiPrefix)
+					fmt.Printf("Npcf_SMPolicyControl service ApiPrefix :%+v\n", service.ApiPrefix)
+					smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConf)
+					return nil
+				}
+			}
+		}
+	*/
+	// 20210714 url replace
+	SmPolicyControlConftwo := Npcf_SMPolicyControl.NewConfiguration()
+	SmPolicyControlConftwo.SetBasePath("http://127.0.0.1:29502")
+	smContext.SMPolicyClient = Npcf_SMPolicyControl.NewAPIClient(SmPolicyControlConftwo)
 	/*
 		// Create SMPolicyControl Client for this SM Context
 		for _, service := range *smContext.SelectedPCFProfile.NfServices {

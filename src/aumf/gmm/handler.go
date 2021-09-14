@@ -1688,7 +1688,7 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 		return false, nil
 	}
 
-	amfSelf := context.AUMF_Self()
+	//amfSelf := context.AUMF_Self()
 
 	/*
 		// TODO: consider ausf group id, Routing ID part of SUCI
@@ -1714,30 +1714,35 @@ func AuthenticationProcedure(ue *context.AmfUe, accessType models.AccessType) (b
 			return false, err
 		}
 	*/
-	// TODO: consider ausf group id, Routing ID part of SUCI
-	param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
-	//resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
-	resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AMF, models.NfType_AMF, &param)
-	if err != nil {
-		logger.GmmLog.Error("AMF can not select an AUMF by NRF one")
-		return false, err
-	}
-	//fmt.Printf("AMF search AUMF instance resp:%+v\n", resp)
-	// select the first AUSF, TODO: select base on other info
-	var aumfUri string
-	for _, nfProfile := range resp.NfInstances {
-		ue.AusfId = nfProfile.NfInstanceId
-		aumfUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NAUSF_AUTH, models.NfServiceStatus_REGISTERED)
-		if aumfUri != "" {
-			break
+	/*
+		// TODO: consider ausf group id, Routing ID part of SUCI
+		param := Nnrf_NFDiscovery.SearchNFInstancesParamOpts{}
+		//resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AUSF, models.NfType_AMF, &param)
+		resp, err := consumer.SendSearchNFInstances(amfSelf.NrfUri, models.NfType_AMF, models.NfType_AMF, &param)
+		if err != nil {
+			logger.GmmLog.Error("AMF can not select an AUMF by NRF one")
+			return false, err
 		}
-	}
-	if aumfUri == "" {
-		err = fmt.Errorf("AMF can not select an AUMF by NRF two")
-		logger.GmmLog.Errorf(err.Error())
-		return false, err
-	}
-	ue.AusfUri = aumfUri
+		//fmt.Printf("AMF search AUMF instance resp:%+v\n", resp)
+		// select the first AUSF, TODO: select base on other info
+		var aumfUri string
+		for _, nfProfile := range resp.NfInstances {
+			ue.AusfId = nfProfile.NfInstanceId
+			aumfUri = util.SearchNFServiceUri(nfProfile, models.ServiceName_NAUSF_AUTH, models.NfServiceStatus_REGISTERED)
+			if aumfUri != "" {
+				break
+			}
+		}
+		if aumfUri == "" {
+			err = fmt.Errorf("AMF can not select an AUMF by NRF two")
+			logger.GmmLog.Errorf(err.Error())
+			return false, err
+		}
+		ue.AusfUri = aumfUri
+	*/
+	// 20210714 url replace
+	ue.AusfUri = "http://127.0.0.1:29518"
+	//fmt.Printf("aumfUri : %+v\n", ue.AusfUri)
 
 	response, problemDetails, err := consumer.SendUEAuthenticationAuthenticateRequest(ue, nil)
 	if err != nil {
